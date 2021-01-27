@@ -1,0 +1,72 @@
+$primaryLight: #e1ca96;
+$primaryDark: #23231a;
+$secondaryDark: #322f20;
+$secondaryLight: #aca885;
+$accent: #fe5f00;
+
+.value {
+  font-weight: bolder;
+  font-size: large;
+}
+
+.valueHeader {
+  display: flex;
+}
+
+.flex {
+  display: flex;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.justify-flex-start {
+  justify-content: flex-start;
+}
+
+.justify-flex-end {
+  justify-content: flex-end;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.apartmentCard {
+  display: flex;
+  flex-wrap: wrap;
+  width: 60vw;
+  border: solid;
+  border-color: $primaryDark;
+  border-radius: 0.5rem;
+  border-width: 2px;
+  margin-bottom: 1rem;
+}
+
+.infoBox {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  width: 25%;
+  margin-bottom: 1rem;
+  word-wrap: break-word;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.icon {
+  width: 20%;
+}

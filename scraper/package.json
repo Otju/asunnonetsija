@@ -1,0 +1,25 @@
+{
+  "name": "asunnonetsija-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node",
+    "start": "nodemon ./src/index.ts"
+  },
+  "author": "Otju",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.14.22",
+    "@types/node-fetch": "^2.5.8",
+    "@types/puppeteer": "^5.4.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.5",
+    "got": "^11.8.1",
+    "graphql": "^15.4.0",
+    "graphql-request": "^3.4.0",
+    "node-fetch": "^2.6.1",
+    "puppeteer": "^5.5.0"
+  }
+}
