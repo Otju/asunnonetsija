@@ -17,6 +17,7 @@ export interface Renovation {
   type: string //'Putkiremontti'
   cost: number
   timeTo: number
+  monthlyCost?: number
 }
 
 export interface ApartmentInfo {
@@ -43,4 +44,15 @@ export interface ApartmentInfo {
   renovationsDoneString?: string
   renovationsComingString?: string
   travelTimes: TravelTimes[]
+}
+
+export interface ParsedApartmentInfo extends ApartmentInfo {
+  city: string
+  loanFee: number
+  maintananceFee: number
+  otherFees: number
+  totalFees: number
+  ownLoanFee: number
+  bathroomRenovation: Renovation
+  housingBenefit: number
 }

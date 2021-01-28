@@ -13,38 +13,16 @@ $accent: #fe5f00;
   display: flex;
 }
 
-.flex {
+.apartmentList {
   display: flex;
-}
-
-.wrap {
-  flex-wrap: wrap;
-}
-
-.column {
   flex-direction: column;
-}
-
-.justify-flex-start {
-  justify-content: flex-start;
-}
-
-.justify-flex-end {
-  justify-content: flex-end;
-}
-
-.justify-space-between {
-  justify-content: space-between;
-}
-
-.align-center {
   align-items: center;
 }
 
 .apartmentCard {
   display: flex;
-  flex-wrap: wrap;
   width: 60vw;
+  flex-wrap: wrap;
   border: solid;
   border-color: $primaryDark;
   border-radius: 0.5rem;

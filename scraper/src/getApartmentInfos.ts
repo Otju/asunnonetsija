@@ -127,7 +127,10 @@ const parseRenovations = ({
   let renovationDone = false
 
   if (renovationsComingString) {
-    const { hasTag, timeToRenovation } = searchTags(renovationsComingString, renovationTypes[0].tags)
+    const { hasTag, timeToRenovation } = searchTags(
+      renovationsComingString,
+      renovationTypes[0].tags
+    )
     if (hasTag) {
       timeTo = timeToRenovation || 1
       renovationComing = true
