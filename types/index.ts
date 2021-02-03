@@ -1,4 +1,4 @@
-export interface TravelTimes {
+export interface TravelTime {
   destination: string
   duration: number
 }
@@ -43,7 +43,7 @@ export interface ApartmentInfo {
   bigRenovations: Renovation[]
   renovationsDoneString?: string
   renovationsComingString?: string
-  travelTimes: TravelTimes[]
+  travelTimes: TravelTime[]
 }
 
 export interface ParsedApartmentInfo extends ApartmentInfo {
@@ -55,4 +55,15 @@ export interface ParsedApartmentInfo extends ApartmentInfo {
   ownLoanFee: number
   bathroomRenovation: Renovation
   housingBenefit: number
+}
+
+export interface SearchOption {
+  field: 'totalFees' | 'pricePerSqrMeter' | 'sqrMeters'
+  displayName: string
+  min?: number
+  max?: number
+  defaultMin?: number
+  defaultMax: number
+  trueMax?: number
+  unit?: string
 }

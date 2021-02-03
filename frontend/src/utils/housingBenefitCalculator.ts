@@ -68,7 +68,7 @@ const calculateHousingBenefit = ({
 
   let monthlyBenefit = 0.8 * (acceptableCosts - basicResponsibility)
 
-  return monthlyBenefit
+  return monthlyBenefit > 0 ? monthlyBenefit : 0
 }
 
 export default calculateHousingBenefit

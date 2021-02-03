@@ -1,29 +1,19 @@
-import { FC, ReactNode } from 'react'
-import { IconType } from 'react-icons'
+import { FC } from 'react'
 import { ParsedApartmentInfo } from '../../../types'
 import { getInfoBoxes } from '../utils/apartmentParsers'
-
-const InfoBox: FC<{ header: string; info: string | ReactNode; Icon: IconType }> = ({
-  info,
-  header,
-  Icon,
-}) => (
-  <div className="infoBox">
-    {<Icon size={30} className="icon" />}
-    <div className="info">
-      <span className="valueHeader">{header}</span>
-      <span className="value">{info}</span>
-    </div>
-  </div>
-)
+import InfoBoxGrop from './InfoBoxGroup'
 
 const ApartmentCard: FC<{ info: ParsedApartmentInfo }> = ({ info }) => {
-  const infoBoxes = getInfoBoxes(info)
+  const generalInfoBoxes = getInfoBoxes(info)
+  const feeInfoBoxes = getInfoBoxes(info, 'fees')
+  const travelDurationInfoBoxes = getInfoBoxes(info, 'travelTimes')
   return (
-    <div className="apartmentCard">
-      {infoBoxes.map(({ header, info, icon }) => (
-        <InfoBox header={header} info={info} Icon={icon} key={header} />
-      ))}
+    <div className="apartmentCard bordered">
+      <div className="horizontalInfo">
+        <InfoBoxGrop infoBoxes={generalInfoBoxes} />
+        <InfoBoxGrop infoBoxes={travelDurationInfoBoxes} />
+      </div>
+      <InfoBoxGrop infoBoxes={feeInfoBoxes} vertical />
     </div>
   )
 }

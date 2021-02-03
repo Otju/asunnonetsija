@@ -146,7 +146,7 @@ const parseRenovations = ({
 
   if (!renovationComing && !renovationDone) {
     const currentYear = new Date().getFullYear()
-    const buildingAge = currentYear - buildYear
+    const buildingAge = currentYear - (buildYear || 0)
     const timeToRenovation = 50 - buildingAge
     if (timeToRenovation > 0) {
       timeTo = timeToRenovation

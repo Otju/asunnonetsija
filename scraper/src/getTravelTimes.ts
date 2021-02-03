@@ -1,6 +1,6 @@
 import { request, gql } from 'graphql-request'
 import fetch from 'node-fetch'
-import { TravelTimes, Coordinates, Destination } from '../../types'
+import { TravelTime, Coordinates, Destination } from '../../types'
 
 export const getCoordinates = async (address: string): Promise<Coordinates> => {
   const response = await fetch(
@@ -32,7 +32,10 @@ const getTravelTimeFromCoordinates = async (from: Coordinates, to: Coordinates) 
     }
   }
 `
-  const data = await request('https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql', query)
+  const data = await request(
+    'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql',
+    query
+  )
   interface durationObject {
     duration: number
   }
@@ -42,7 +45,7 @@ const getTravelTimeFromCoordinates = async (from: Coordinates, to: Coordinates) 
 }
 
 const getTravelTimes = async (fromAddress: string, toDestinations: Destination[]) => {
-  const travelTimes: TravelTimes[] = []
+  const travelTimes: TravelTime[] = []
   try {
     const from = await getCoordinates(fromAddress)
     for (const { destination, coordinates } of toDestinations) {
