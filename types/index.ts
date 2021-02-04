@@ -57,8 +57,15 @@ export interface ParsedApartmentInfo extends ApartmentInfo {
   housingBenefit: number
 }
 
+export type PossibleDestinations =
+  | 'Aalto Yliopisto'
+  | 'Helsingin Yliopisto'
+  | 'Papinmäentie 15 B'
+  | 'Helsingin rautatieasema'
+
 export interface SearchOption {
-  field: 'totalFees' | 'pricePerSqrMeter' | 'sqrMeters'
+  field: 'totalFees' | 'pricePerSqrMeter' | 'sqrMeters' | 'travelTime'
+  destination?: PossibleDestinations
   displayName: string
   min?: number
   max?: number

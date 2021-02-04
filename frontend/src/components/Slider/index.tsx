@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
-import { Slider, Handles, Tracks, Rail, Ticks } from 'react-compound-slider'
-import { Handle, Track, Tick } from './components'
+import { Slider, Handles, Tracks, Rail } from 'react-compound-slider'
+import { Handle, Track } from './components'
 interface SliderProps {
   displayName: string
   defaultMin?: number
@@ -25,13 +25,8 @@ const CustomSlider: FC<SliderProps> = ({
   const [showTrueMax, setShowTrueMax] = useState(false)
 
   return (
-    <div>
+    <div className="sliderContainer">
       <h4>{displayName}</h4>
-      {trueMax && (
-        <button className="trueMaxButton" onClick={() => setShowTrueMax(!showTrueMax)}>
-          {showTrueMax ? '-' : '+'}
-        </button>
-      )}
       <Slider
         className="slider"
         domain={[defaultMin, showTrueMax && trueMax ? trueMax : defaultMax]}
@@ -64,16 +59,12 @@ const CustomSlider: FC<SliderProps> = ({
             </div>
           )}
         </Tracks>
-        <Ticks count={2}>
-          {({ ticks }) => (
-            <div>
-              {ticks.map((tick) => (
-                <Tick key={tick.id} tick={tick} count={ticks.length} unit={unit} />
-              ))}
-            </div>
-          )}
-        </Ticks>
       </Slider>
+      {trueMax && (
+        <button className="trueMaxButton" onClick={() => setShowTrueMax(!showTrueMax)}>
+          {showTrueMax ? '-' : '+'}
+        </button>
+      )}
     </div>
   )
 }

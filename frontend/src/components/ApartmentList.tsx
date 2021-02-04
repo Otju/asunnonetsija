@@ -5,11 +5,14 @@ import { SearchOption, ParsedApartmentInfo } from '../../../types'
 
 const ApartmentList: FC<{ searchOptions: SearchOption[] }> = ({ searchOptions }) => {
   const apartmentInfos = getApartmentInfos()
-  console.log(searchOptions)
   const filterApartments = (apartment: ParsedApartmentInfo): boolean => {
     let keep = true
-    searchOptions.forEach(({ field, min, max }) => {
-      const value = apartment[field]
+    searchOptions.forEach(({ field, min, max, destination }) => {
+      const value =
+        field === 'travelTime'
+          ? apartment.travelTimes.find((travelTime) => travelTime.destination === destination)
+              ?.duration
+          : apartment[field]
       if (value) {
         if (max && value > max) {
           keep = false

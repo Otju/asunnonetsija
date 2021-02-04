@@ -6,6 +6,8 @@ $accent: #fe5f00;
 
 body {
   font-family: Helvetica, sans-serif;
+  background-color: $primaryDark;
+  color: $primaryLight;
 }
 
 .main {
@@ -38,7 +40,7 @@ body {
 
 .bordered {
   border: solid;
-  border-color: $primaryDark;
+  border-color: $primaryLight;
   border-radius: 0.5rem;
   border-width: 2px;
   padding: 1rem;
@@ -129,16 +131,29 @@ $handlesize: 1rem;
 }
 
 .trueMaxButton {
-  position: absolute;
-  margin-left: 23%;
-  margin-top: 2rem;
+  position: relative;
+  left: 21rem;
+  bottom: 3.1rem;
   border: none;
   color: $primaryDark;
   background-color: $primaryLight;
   border-radius: 3px;
 }
 
+a {
+  color: $primaryLight;
+}
+
 h4 {
   text-align: center;
-  color: $secondaryDark;
+}
+
+.searchOptionsMenu {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sliderContainer {
+  width: 20rem;
+  margin: 0rem 3rem;
 }
