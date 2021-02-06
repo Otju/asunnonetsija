@@ -2,10 +2,16 @@ import './app.scss'
 import { useState } from 'react'
 import ApartmentList from './components/ApartmentList'
 import SearchOptionMenu from './components/SearchOptionsMenu'
-import { SearchOption, PossibleDestinations } from '../../types'
+import {
+  SearchOption,
+  PossibleDestination,
+  ParsedApartmentInfo,
+  ApartmentInfoField,
+} from '../../types'
+import { getApartmentInfos } from './utils/apartmentParsers'
 
 const App = () => {
-  const possibleDestinations: PossibleDestinations[] = [
+  const possibleDestinations: PossibleDestination[] = [
     'Aalto Yliopisto',
     'Helsingin Yliopisto',
     'Papinmäentie 15 B',
@@ -13,37 +19,106 @@ const App = () => {
   ]
 
   const destinationSearches: SearchOption[] = possibleDestinations.map((destination) => ({
-    field: 'travelTime',
+    field: 'travelTimes',
     displayName: `Matka-aika: ${destination}`,
     defaultMax: 120,
     unit: 'min',
-    trueMax: 180,
     destination: destination,
   }))
 
-  const [searchOptions, setSearchOptions] = useState<SearchOption[]>([
+  const apartmentInfos = getApartmentInfos()
+
+  const findMinMax = (
+    apartmentInfos: ParsedApartmentInfo[],
+    field: ApartmentInfoField,
+    destination?: PossibleDestination
+  ) => {
+    let numberArray = []
+    if (field === 'travelTimes') {
+      numberArray = apartmentInfos.map(
+        (info) => info.travelTimes.find((item) => item.destination === destination)?.duration
+      )
+    } else {
+      numberArray = apartmentInfos.map((info) => info[field])
+    }
+    const min =
+      numberArray.reduce((prev, current) => ((prev || 0) < (current || 0) ? prev : current)) || 0
+    const max =
+      numberArray.reduce((prev, current) => ((prev || 0) > (current || 0) ? prev : current)) || 0
+    return {
+      min: Math.floor(min),
+      max: Math.ceil(max),
+    }
+  }
+  let initialSearchOptions: SearchOption[] = [
     {
       field: 'totalFees',
       displayName: 'Kokonaiskulut',
       defaultMax: 1200,
       unit: '€/kk',
-      trueMax: 10000,
     },
     {
       field: 'pricePerSqrMeter',
       displayName: 'Neliöhinta',
       defaultMax: 6000,
       unit: '€/m²',
-      trueMax: 12000,
     },
-    { field: 'sqrMeters', displayName: 'Koko', defaultMax: 200, unit: 'm²', trueMax: 1000 },
+    { field: 'sqrMeters', displayName: 'Pinta-ala', defaultMax: 200, unit: 'm²' },
     ...destinationSearches,
-  ])
+  ]
+
+  initialSearchOptions = initialSearchOptions.map((searchOption) => {
+    const { min, max } = findMinMax(apartmentInfos, searchOption.field, searchOption.destination)
+
+    let defaultMax = searchOption.defaultMax
+
+    let noTrueMax = false
+
+    if (defaultMax / max >= 0.7) {
+      defaultMax = max
+      noTrueMax = true
+    }
+
+    return {
+      ...searchOption,
+      defaultMax: defaultMax,
+      defaultMin: min,
+      trueMax: noTrueMax ? undefined : max,
+    }
+  })
+
+  const [searchOptions, setSearchOptions] = useState<SearchOption[]>(initialSearchOptions)
+
+  const filterApartments = (apartment: ParsedApartmentInfo): boolean => {
+    let keep = true
+    searchOptions.forEach(({ field, min, max, destination }) => {
+      const value =
+        field === 'travelTimes'
+          ? apartment.travelTimes.find((travelTime) => travelTime.destination === destination)
+              ?.duration
+          : apartment[field]
+      if (value) {
+        if (max && value > max) {
+          keep = false
+        }
+        if (min && value < min) {
+          keep = false
+        }
+      }
+    })
+    return keep
+  }
+
+  const filteredApartmentInfos = apartmentInfos
+    .filter(filterApartments)
+    .sort((a, b) => a.totalFees - b.totalFees)
+
   return (
     <div className="pageBackground">
       <div className="main">
         <SearchOptionMenu {...{ searchOptions, setSearchOptions }} />
-        <ApartmentList searchOptions={searchOptions} />
+        <h2>Asuntoja: {filteredApartmentInfos.length}</h2>
+        <ApartmentList apartmentInfos={filteredApartmentInfos.slice(0, 30)} />
       </div>
     </div>
   )

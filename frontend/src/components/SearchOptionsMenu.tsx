@@ -13,7 +13,7 @@ const SearchOptionsMenu: FC<{ searchOptions: SearchOption[]; setSearchOptions: F
     field: string,
     destination?: string
   ) => {
-    if (searchOption.field === 'travelTime') {
+    if (searchOption.field === 'travelTimes') {
       return searchOption.destination === destination
     } else {
       return searchOption.field === field
