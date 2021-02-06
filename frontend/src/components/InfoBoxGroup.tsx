@@ -1,7 +1,6 @@
-import { FC } from 'react'
 import InfoBox, { InfoBoxType } from './InfoBox'
 
-const InfoBoxGrop: FC<{ infoBoxes: InfoBoxType[]; vertical?: boolean }> = ({
+const InfoBoxGrop: React.FC<{ infoBoxes: InfoBoxType[]; vertical?: boolean }> = ({
   infoBoxes,
   vertical,
 }) => {

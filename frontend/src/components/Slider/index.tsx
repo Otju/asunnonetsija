@@ -1,27 +1,29 @@
-import { FC, useState } from 'react'
-import { Slider, Handles, Tracks, Rail } from 'react-compound-slider'
-import { Handle, Track } from './components'
+import { useState } from 'react'
+import { Slider, Handles, Tracks, Rail, Ticks } from 'react-compound-slider'
+import { Handle, Track, Tick } from './components'
 interface SliderProps {
   displayName: string
   defaultMin?: number
   defaultMax: number
   trueMax?: number
-  setMinMax: Function
+  handleChange: (values: readonly number[]) => void
   unit?: string
+  notRange?: boolean
+  defaultValue?: number
+  step?: number
 }
 
-const CustomSlider: FC<SliderProps> = ({
+const CustomSlider: React.FC<SliderProps> = ({
   defaultMin = 0,
   defaultMax,
   trueMax,
   displayName,
-  setMinMax,
+  handleChange,
   unit = '',
+  notRange,
+  defaultValue,
+  step = 1,
 }) => {
-  const handleChange = (values: readonly number[]) => {
-    setMinMax(values[0], values[1])
-  }
-
   const [showTrueMax, setShowTrueMax] = useState(false)
 
   return (
@@ -30,9 +32,9 @@ const CustomSlider: FC<SliderProps> = ({
       <Slider
         className="slider"
         domain={[defaultMin, showTrueMax && trueMax ? trueMax : defaultMax]}
-        step={1}
+        step={step}
         mode={2}
-        values={[defaultMin, defaultMax]}
+        values={notRange ? [defaultValue || defaultMin] : [defaultMin, defaultMax]}
         onChange={handleChange}
       >
         <Rail>{({ getRailProps }) => <div className="rail" {...getRailProps()} />}</Rail>
@@ -59,6 +61,19 @@ const CustomSlider: FC<SliderProps> = ({
             </div>
           )}
         </Tracks>
+        <Ticks
+          values={
+            trueMax && showTrueMax ? [defaultMin, defaultMax, trueMax] : [defaultMin, defaultMax]
+          }
+        >
+          {({ ticks }) => (
+            <div>
+              {ticks.map((tick) => (
+                <Tick key={tick.id} tick={tick} count={ticks.length} unit={unit} />
+              ))}
+            </div>
+          )}
+        </Ticks>
       </Slider>
       {trueMax && (
         <button className="trueMaxButton" onClick={() => setShowTrueMax(!showTrueMax)}>

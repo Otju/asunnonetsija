@@ -17,7 +17,13 @@ import calculateHousingBenefit from './housingBenefitCalculator'
 import { ReactNode } from 'react'
 import { IconType } from 'react-icons/lib'
 
-export const getApartmentInfos = () => {
+interface getApartmentInfoInput {
+  loanYears?: number
+  yearlyIntrest?: number
+  savings?: number
+}
+
+export const getApartmentInfos = ({ loanYears, yearlyIntrest, savings }: getApartmentInfoInput) => {
   return apartmentInfos.map((info) => {
     const loanFee = info.loanFee || 0
     const maintananceFee = info.maintananceFee || 0
@@ -26,7 +32,12 @@ export const getApartmentInfos = () => {
       (info.newBuilding
         ? info.loanFreePrice || info.sellingPrice
         : info.sellingPrice || info.loanFreePrice) || 0
-    const ownLoanFee = calculateMonthlyFee({ loanAmount: amountToLoan })
+    const ownLoanFee = calculateMonthlyFee({
+      loanAmount: amountToLoan,
+      loanYears,
+      yearlyIntrest,
+      savings,
+    })
     const totalFees = loanFee + maintananceFee + ownLoanFee + otherFees
     const bathroomRenovation: Renovation = info.bigRenovations[0]
     if (bathroomRenovation) {

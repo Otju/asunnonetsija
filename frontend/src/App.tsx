@@ -9,6 +9,7 @@ import {
   ApartmentInfoField,
 } from '../../types'
 import { getApartmentInfos } from './utils/apartmentParsers'
+import Slider from './components/Slider'
 
 const App = () => {
   const possibleDestinations: PossibleDestination[] = [
@@ -26,7 +27,81 @@ const App = () => {
     destination: destination,
   }))
 
-  const apartmentInfos = getApartmentInfos()
+  const [loanVariables, setLoanVariables] = useState({
+    loanYears: 20,
+    yearlyIntrest: 1.5,
+    savings: 0,
+  })
+
+  type loanVariable = 'loanYears' | 'yearlyIntrest' | 'savings'
+
+  interface inputType {
+    field: loanVariable
+    displayName: string
+    defaultMax: number
+    defaultValue: number
+    unit: string
+    defaultMin?: number
+    trueMax?: number
+    step?: number
+  }
+
+  const inputTypes: inputType[] = [
+    {
+      field: 'loanYears',
+      displayName: 'Laina-aika',
+      defaultMax: 30,
+      defaultValue: 20,
+      unit: 'v',
+      defaultMin: 10,
+    },
+    {
+      field: 'yearlyIntrest',
+      displayName: 'Korko',
+      defaultMax: 10,
+      defaultValue: 1.5,
+      unit: '%',
+      step: 0.5,
+    },
+    {
+      field: 'savings',
+      displayName: 'Säästöt',
+      defaultMax: 100000,
+      defaultValue: 0,
+      unit: '€',
+      trueMax: 1000000,
+      step: 100,
+    },
+  ]
+
+  const loanSliders = inputTypes.map(
+    ({
+      field,
+      displayName,
+      defaultMax,
+      defaultValue,
+      unit,
+      defaultMin,
+      trueMax,
+      step,
+    }: inputType) => {
+      const handleChange = (values: readonly number[]) => {
+        const newLoanVariables = { ...loanVariables }
+        newLoanVariables[field] = values[0]
+        setLoanVariables(newLoanVariables)
+      }
+      return (
+        <Slider
+          handleChange={handleChange}
+          {...{ displayName, defaultMax, defaultValue, unit, defaultMin, trueMax, step }}
+          key={displayName}
+          notRange
+        />
+      )
+    }
+  )
+
+  const apartmentInfos = getApartmentInfos(loanVariables)
 
   const findMinMax = (
     apartmentInfos: ParsedApartmentInfo[],
@@ -116,6 +191,7 @@ const App = () => {
   return (
     <div className="pageBackground">
       <div className="main">
+        {loanSliders}
         <SearchOptionMenu {...{ searchOptions, setSearchOptions }} />
         <h2>Asuntoja: {filteredApartmentInfos.length}</h2>
         <ApartmentList apartmentInfos={filteredApartmentInfos.slice(0, 30)} />

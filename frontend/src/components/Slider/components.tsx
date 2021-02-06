@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import { GetHandleProps, SliderItem, GetTrackProps } from 'react-compound-slider'
 
 interface TickProps {
@@ -7,7 +6,7 @@ interface TickProps {
   unit: string
 }
 
-export const Tick: FC<TickProps> = ({ tick, count, unit }) => {
+export const Tick: React.FC<TickProps> = ({ tick, count, unit }) => {
   return (
     <div>
       <div style={{ left: `${tick.percent}%` }} className="tick-mark" />
@@ -32,7 +31,7 @@ interface HandleProps {
   getHandleProps: GetHandleProps
 }
 
-export const Handle: FC<HandleProps> = ({
+export const Handle: React.FC<HandleProps> = ({
   handle: { id, value, percent },
   unit,
   getHandleProps,
@@ -60,7 +59,7 @@ interface TrackProps {
   getTrackProps: GetTrackProps
 }
 
-export const Track: FC<TrackProps> = ({ source, target, getTrackProps }) => {
+export const Track: React.FC<TrackProps> = ({ source, target, getTrackProps }) => {
   return (
     <div
       style={{

@@ -1,9 +1,8 @@
-import { FC } from 'react'
 import { ParsedApartmentInfo } from '../../../types'
 import { getInfoBoxes } from '../utils/apartmentParsers'
 import InfoBoxGrop from './InfoBoxGroup'
 
-const ApartmentCard: FC<{ info: ParsedApartmentInfo }> = ({ info }) => {
+const ApartmentCard: React.FC<{ info: ParsedApartmentInfo }> = ({ info }) => {
   const generalInfoBoxes = getInfoBoxes(info)
   const feeInfoBoxes = getInfoBoxes(info, 'fees')
   const travelDurationInfoBoxes = getInfoBoxes(info, 'travelTimes')

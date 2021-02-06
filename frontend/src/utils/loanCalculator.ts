@@ -7,12 +7,12 @@ interface monthlyFeeInputs {
 
 export const calculateMonthlyFee = ({
   loanYears = 20,
-  yearlyIntrest = 0.015,
+  yearlyIntrest = 1.5,
   loanAmount,
   savings = 0,
 }: monthlyFeeInputs): number => {
   const loanMonths = loanYears * 12
-  const monthlyIntrest = yearlyIntrest / 12
+  const monthlyIntrest = yearlyIntrest / 100 / 12
   const amountToPay = loanAmount - savings > 0 ? loanAmount - savings : 0
 
   const monthlyFee =

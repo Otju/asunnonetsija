@@ -1,11 +1,10 @@
-import { FC } from 'react'
 import { SearchOption } from '../../../types'
 import Slider from './Slider'
 
-const SearchOptionsMenu: FC<{ searchOptions: SearchOption[]; setSearchOptions: Function }> = ({
-  searchOptions,
-  setSearchOptions,
-}) => {
+const SearchOptionsMenu: React.FC<{
+  searchOptions: SearchOption[]
+  setSearchOptions: Function
+}> = ({ searchOptions, setSearchOptions }) => {
   console.log(searchOptions)
 
   const isCurrentSearchOption = (
@@ -24,21 +23,17 @@ const SearchOptionsMenu: FC<{ searchOptions: SearchOption[]; setSearchOptions: F
     <div className="bordered">
       <h2>Etsi</h2>
       <div className="searchOptionsMenu">
-        {searchOptions.map(({ field, destination, ...props }) => (
-          <Slider
-            key={`${field}${destination}`}
-            {...props}
-            setMinMax={(min: number, max: number) =>
-              setSearchOptions(
-                searchOptions.map((searchOption) =>
-                  isCurrentSearchOption(searchOption, field, destination)
-                    ? { ...searchOption, min, max }
-                    : searchOption
-                )
+        {searchOptions.map(({ field, destination, ...props }) => {
+          const handleChange = (values: readonly number[]) =>
+            setSearchOptions(
+              searchOptions.map((searchOption) =>
+                isCurrentSearchOption(searchOption, field, destination)
+                  ? { ...searchOption, min: values[0], max: values[1] }
+                  : searchOption
               )
-            }
-          />
-        ))}
+            )
+          return <Slider key={`${field}${destination}`} {...props} handleChange={handleChange} />
+        })}
       </div>
     </div>
   )
