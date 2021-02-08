@@ -28,12 +28,14 @@ export const Tick: React.FC<TickProps> = ({ tick, count, unit }) => {
 interface HandleProps {
   handle: SliderItem
   unit: string
+  index: number
   getHandleProps: GetHandleProps
 }
 
 export const Handle: React.FC<HandleProps> = ({
   handle: { id, value, percent },
   unit,
+  index,
   getHandleProps,
 }) => {
   return (
@@ -45,7 +47,13 @@ export const Handle: React.FC<HandleProps> = ({
       className="handle"
       {...getHandleProps(id)}
     >
-      <div style={{ fontSize: 11, marginTop: -35 }}>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: `${index ? '50px' : ''}`,
+        }}
+        className="handleText"
+      >
         {value}
         {unit}
       </div>

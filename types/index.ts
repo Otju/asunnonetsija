@@ -63,16 +63,43 @@ export type PossibleDestination =
   | 'Papinmäentie 15 B'
   | 'Helsingin rautatieasema'
 
-export type ApartmentInfoField = 'totalFees' | 'pricePerSqrMeter' | 'sqrMeters' | 'travelTimes'
+export type ApartmentInfoField = 'totalFees' | 'pricePerSqrMeter' | 'sqrMeters'
 
-export interface SearchOption {
-  field: ApartmentInfoField
-  destination?: PossibleDestination
+interface FilterOption {
   displayName: string
-  min?: number
-  max?: number
   defaultMin?: number
   defaultMax: number
-  trueMax?: number
   unit?: string
+}
+
+export interface GeneralFilterField extends FilterOption {
+  field: ApartmentInfoField
+}
+
+export interface TravelFilterField extends FilterOption {
+  destination: PossibleDestination
+}
+
+export interface GeneralSetting {
+  name: ApartmentInfoField
+  min: number
+  max: number
+}
+
+export interface TravelSetting {
+  name: PossibleDestination
+  min: number
+  max: number
+}
+
+export interface LoanSettings {
+  loanYears: number
+  yearlyIntrest: number
+  savings: number
+}
+
+export interface SearchOptions {
+  generalFilterSettings: GeneralSetting[]
+  travelTimeFilterSettings: TravelSetting[]
+  loanSettings?: LoanSettings
 }

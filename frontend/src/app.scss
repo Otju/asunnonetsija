@@ -120,6 +120,11 @@ $handlesize: 1rem;
   background-color: $primaryLight;
 }
 
+.handleText {
+  font-size: 12px;
+  margin-top: -35px;
+}
+
 .track {
   position: absolute;
   height: 10px;
@@ -130,14 +135,11 @@ $handlesize: 1rem;
   cursor: pointer;
 }
 
-.trueMaxButton {
-  position: relative;
-  left: 21rem;
-  bottom: 3.1rem;
+.tabButton {
   border: none;
-  color: $primaryDark;
-  background-color: $primaryLight;
-  border-radius: 3px;
+  background-color: $primaryDark;
+  color: $primaryLight;
+  font-size: 1.5rem;
 }
 
 a {

@@ -1,50 +1,54 @@
-import { useState } from 'react'
 import { Slider, Handles, Tracks, Rail, Ticks } from 'react-compound-slider'
 import { Handle, Track, Tick } from './components'
 interface SliderProps {
   displayName: string
   defaultMin?: number
   defaultMax: number
-  trueMax?: number
   handleChange: (values: readonly number[]) => void
   unit?: string
   notRange?: boolean
   defaultValue?: number
   step?: number
+  min?: number
+  max?: number
+  value?: number
 }
 
 const CustomSlider: React.FC<SliderProps> = ({
   defaultMin = 0,
   defaultMax,
-  trueMax,
   displayName,
   handleChange,
   unit = '',
   notRange,
   defaultValue,
   step = 1,
+  min,
+  max,
+  value,
 }) => {
-  const [showTrueMax, setShowTrueMax] = useState(false)
-
   return (
     <div className="sliderContainer">
       <h4>{displayName}</h4>
       <Slider
         className="slider"
-        domain={[defaultMin, showTrueMax && trueMax ? trueMax : defaultMax]}
+        domain={[defaultMin, defaultMax]}
         step={step}
         mode={2}
-        values={notRange ? [defaultValue || defaultMin] : [defaultMin, defaultMax]}
+        values={
+          notRange ? [value || defaultValue || defaultMin] : [min || defaultMin, max || defaultMax]
+        }
         onChange={handleChange}
       >
         <Rail>{({ getRailProps }) => <div className="rail" {...getRailProps()} />}</Rail>
         <Handles>
           {({ handles, getHandleProps }) => (
             <div>
-              {handles.map((handle) => (
+              {handles.map((handle, i) => (
                 <Handle
                   key={handle.id}
                   handle={handle}
+                  index={i}
                   unit={unit}
                   getHandleProps={getHandleProps}
                 />
@@ -61,11 +65,7 @@ const CustomSlider: React.FC<SliderProps> = ({
             </div>
           )}
         </Tracks>
-        <Ticks
-          values={
-            trueMax && showTrueMax ? [defaultMin, defaultMax, trueMax] : [defaultMin, defaultMax]
-          }
-        >
+        <Ticks values={[defaultMin, defaultMax]}>
           {({ ticks }) => (
             <div>
               {ticks.map((tick) => (
@@ -75,11 +75,6 @@ const CustomSlider: React.FC<SliderProps> = ({
           )}
         </Ticks>
       </Slider>
-      {trueMax && (
-        <button className="trueMaxButton" onClick={() => setShowTrueMax(!showTrueMax)}>
-          {showTrueMax ? '-' : '+'}
-        </button>
-      )}
     </div>
   )
 }

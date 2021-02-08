@@ -11,19 +11,13 @@ import {
   IoHourglassOutline,
   IoBusOutline,
 } from 'react-icons/io5'
-import { ParsedApartmentInfo } from '../../../types'
+import { ParsedApartmentInfo, LoanSettings } from '../../../types'
 import formatCurrency from './currencyFormatter'
 import calculateHousingBenefit from './housingBenefitCalculator'
 import { ReactNode } from 'react'
 import { IconType } from 'react-icons/lib'
 
-interface getApartmentInfoInput {
-  loanYears?: number
-  yearlyIntrest?: number
-  savings?: number
-}
-
-export const getApartmentInfos = ({ loanYears, yearlyIntrest, savings }: getApartmentInfoInput) => {
+export const getApartmentInfos = (loanSettings: LoanSettings | undefined) => {
   return apartmentInfos.map((info) => {
     const loanFee = info.loanFee || 0
     const maintananceFee = info.maintananceFee || 0
@@ -34,9 +28,7 @@ export const getApartmentInfos = ({ loanYears, yearlyIntrest, savings }: getApar
         : info.sellingPrice || info.loanFreePrice) || 0
     const ownLoanFee = calculateMonthlyFee({
       loanAmount: amountToLoan,
-      loanYears,
-      yearlyIntrest,
-      savings,
+      ...loanSettings,
     })
     const totalFees = loanFee + maintananceFee + ownLoanFee + otherFees
     const bathroomRenovation: Renovation = info.bigRenovations[0]
