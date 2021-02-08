@@ -58,9 +58,13 @@ const Tabs: React.FC<{
   return (
     <div className="bordered">
       {tabs.map(({ name, value }) => (
-        <button onClick={() => setTab(value)} className="tabButton" key={name}>
+        <span
+          onClick={() => setTab(value)}
+          className={`tabButton ${value === tab && 'selectedTabButton'}`}
+          key={name}
+        >
           {name}
-        </button>
+        </span>
       ))}
       <div className="searchOptionsMenu">{tabToShow}</div>
     </div>

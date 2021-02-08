@@ -136,10 +136,17 @@ $handlesize: 1rem;
 }
 
 .tabButton {
-  border: none;
   background-color: $primaryDark;
   color: $primaryLight;
   font-size: 1.5rem;
+  margin-right: 1rem;
+  &:hover {
+    border-bottom: rgba($color: $primaryLight, $alpha: 0.5) solid;
+  }
+}
+
+.selectedTabButton {
+  border-bottom: $primaryLight solid;
 }
 
 a {
