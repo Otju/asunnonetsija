@@ -65,29 +65,16 @@ export type PossibleDestination =
 
 export type ApartmentInfoField = 'totalFees' | 'pricePerSqrMeter' | 'sqrMeters'
 
-interface FilterOption {
+export interface FilterField {
+  name: ApartmentInfoField | PossibleDestination
   displayName: string
   defaultMin?: number
   defaultMax: number
   unit?: string
 }
 
-export interface GeneralFilterField extends FilterOption {
-  field: ApartmentInfoField
-}
-
-export interface TravelFilterField extends FilterOption {
-  destination: PossibleDestination
-}
-
-export interface GeneralSetting {
-  name: ApartmentInfoField
-  min: number
-  max: number
-}
-
-export interface TravelSetting {
-  name: PossibleDestination
+export interface FilterSetting {
+  name: ApartmentInfoField | PossibleDestination
   min: number
   max: number
 }
@@ -99,7 +86,6 @@ export interface LoanSettings {
 }
 
 export interface SearchOptions {
-  generalFilterSettings: GeneralSetting[]
-  travelTimeFilterSettings: TravelSetting[]
+  filterSettings: FilterSetting[]
   loanSettings?: LoanSettings
 }

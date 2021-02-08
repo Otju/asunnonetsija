@@ -1,4 +1,5 @@
 import { PossibleDestination, ParsedApartmentInfo, ApartmentInfoField } from '../../../types'
+import { possibleDestinations } from '../utils/constants'
 
 const NumberArrayMinMax = (numberArray: (number | undefined)[]) => {
   const min =
@@ -11,19 +12,14 @@ const NumberArrayMinMax = (numberArray: (number | undefined)[]) => {
   }
 }
 
-export const generalFilterMinMax = (
+export const findMinMax = (
   apartmentInfos: ParsedApartmentInfo[],
-  field: ApartmentInfoField
+  name: ApartmentInfoField | PossibleDestination
 ) => {
-  return NumberArrayMinMax(apartmentInfos.map((info) => info[field]))
-}
-
-export const travelFilterMinMax = (
-  apartmentInfos: ParsedApartmentInfo[],
-  destination: PossibleDestination
-) => {
-  const numberArray = apartmentInfos.map(
-    (info) => info.travelTimes.find((item) => item.destination === destination)?.duration
-  )
+  const numberArray = apartmentInfos.map((info) => {
+    return possibleDestinations.includes(name as PossibleDestination)
+      ? info.travelTimes.find((item) => item.destination === name)?.duration
+      : info[name as ApartmentInfoField]
+  })
   return NumberArrayMinMax(numberArray)
 }

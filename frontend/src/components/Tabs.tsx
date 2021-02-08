@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import LoanSettings from './LoanSettings'
-import GeneralSettings from './GeneralSettings'
-import TravelSettings from './TravelSettings'
 import {
   LoanSettings as LoanSettingsType,
   ParsedApartmentInfo,
   SearchOptions,
 } from '../../../types'
+import { generalFilterFields, travelFilterFields } from '../utils/constants'
+import FilterSettings from './FilterSettings'
 
 const Tabs: React.FC<{
   apartmentInfos: ParsedApartmentInfo[]
@@ -23,19 +23,21 @@ const Tabs: React.FC<{
   switch (tab) {
     case 0:
       tabToShow = (
-        <GeneralSettings
+        <FilterSettings
           apartmentInfos={apartmentInfos}
           setSearchOptions={setSearchOptions}
           searchOptions={searchOptions}
+          filterFields={generalFilterFields}
         />
       )
       break
     case 1:
       tabToShow = (
-        <TravelSettings
+        <FilterSettings
           apartmentInfos={apartmentInfos}
           setSearchOptions={setSearchOptions}
           searchOptions={searchOptions}
+          filterFields={travelFilterFields}
         />
       )
       break
