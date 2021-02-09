@@ -27,6 +27,28 @@ const CustomSlider: React.FC<SliderProps> = ({
   max,
   value,
 }) => {
+  const setMin = (newMin: number) => {
+    const maxToSet = max || defaultMax
+    if (newMin >= maxToSet) {
+      newMin = maxToSet - step
+    }
+    if (newMin < defaultMin) {
+      newMin = defaultMin
+    }
+    handleChange([newMin, maxToSet])
+  }
+
+  const setMax = (newMax: number) => {
+    const minToSet = min || defaultMin
+    if (newMax <= minToSet) {
+      newMax = minToSet + step
+    }
+    if (newMax > defaultMax) {
+      newMax = defaultMax
+    }
+    handleChange([minToSet, newMax])
+  }
+
   return (
     <div className="sliderContainer">
       <h4>{displayName}</h4>
@@ -50,6 +72,8 @@ const CustomSlider: React.FC<SliderProps> = ({
                   handle={handle}
                   index={i}
                   unit={unit}
+                  setMin={setMin}
+                  setMax={setMax}
                   getHandleProps={getHandleProps}
                 />
               ))}

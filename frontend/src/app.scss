@@ -125,6 +125,29 @@ $handlesize: 1rem;
   margin-top: -35px;
 }
 
+.inputContainer {
+  display: flex;
+  align-items: center;
+}
+
+.handleInput {
+  background-color: $primaryDark;
+  color: $primaryLight;
+  border-color: $primaryLight;
+  margin-right: 5px;
+  &:focus {
+    border: 1px solid $primaryLight;
+    border-radius: 0.2rem;
+    outline: none;
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .track {
   position: absolute;
   height: 10px;
@@ -140,6 +163,7 @@ $handlesize: 1rem;
   color: $primaryLight;
   font-size: 1.5rem;
   margin-right: 1rem;
+  cursor: pointer;
   &:hover {
     border-bottom: rgba($color: $primaryLight, $alpha: 0.5) solid;
   }

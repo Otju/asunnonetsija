@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { GetHandleProps, SliderItem, GetTrackProps } from 'react-compound-slider'
 
 interface TickProps {
@@ -30,14 +31,46 @@ interface HandleProps {
   unit: string
   index: number
   getHandleProps: GetHandleProps
+  setMin: (newMin: number) => void
+  setMax: (newMax: number) => void
 }
 
 export const Handle: React.FC<HandleProps> = ({
   handle: { id, value, percent },
   unit,
   index,
+  setMin,
+  setMax,
   getHandleProps,
 }) => {
+  const [selected, setSelected] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+
+  useEffect(() => {
+    setInputValue(value.toString())
+  }, [value])
+
+  const handleSelect = () => {
+    setSelected(true)
+    setInputValue(value.toString())
+  }
+
+  const handleBlur = () => {
+    setSelected(false)
+    const newValue = Number.parseFloat(inputValue)
+    if (index === 0) {
+      setMin(newValue)
+    } else {
+      setMax(newValue)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleBlur()
+    }
+  }
+
   return (
     <div
       style={{
@@ -53,9 +86,28 @@ export const Handle: React.FC<HandleProps> = ({
           bottom: `${index ? '50px' : ''}`,
         }}
         className="handleText"
+        onClick={handleSelect}
       >
-        {value}
-        {unit}
+        {selected ? (
+          <div className="inputContainer">
+            <input
+              onKeyPress={handleKeyPress}
+              value={inputValue}
+              onBlur={handleBlur}
+              onChange={(e) => setInputValue(e.target.value)}
+              autoFocus
+              className="handleInput"
+              style={{ width: `${inputValue.length}ch` }}
+              type="number"
+            ></input>
+            <span>{unit}</span>
+          </div>
+        ) : (
+          <>
+            {value}
+            {unit}
+          </>
+        )}
       </div>
     </div>
   )

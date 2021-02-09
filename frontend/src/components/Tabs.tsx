@@ -53,7 +53,7 @@ const Tabs: React.FC<{
   const tabs = [
     { name: 'Haku', value: 0 },
     { name: 'Matka-ajat', value: 1 },
-    { name: 'Laina-asetukset', value: 2 },
+    { name: 'Laina', value: 2 },
   ]
   return (
     <div className="bordered">
