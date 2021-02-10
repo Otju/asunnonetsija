@@ -3,18 +3,23 @@ const fs = require('fs')
 type FileType = 'CSV' | 'JSON'
 
 export const readFromFile = (fileName: string, fileType: FileType) => {
-  let data = fs.readFileSync(`./src/data/${fileName}`, 'utf8')
-  switch (fileType) {
-    case 'CSV':
-      data = data.split(',')
-      break
-    case 'JSON':
-      data = JSON.parse(data)
-      break
-    default:
-      throw Error('Invalid file type')
+  try {
+    let data = fs.readFileSync(`./src/data/${fileName}`, 'utf8')
+    switch (fileType) {
+      case 'CSV':
+        data = data.split(',')
+        break
+      case 'JSON':
+        data = JSON.parse(data)
+        break
+      default:
+        throw Error('Invalid file type')
+    }
+    return data
+  } catch {
+    console.log('File missing ', fileName)
+    return []
   }
-  return data
 }
 
 export const writeToFile = (

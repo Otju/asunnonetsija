@@ -1,13 +1,8 @@
-import got from 'got'
-import cheerio from 'cheerio'
 import { readFromFile, writeToFile } from './fileEditor'
-import getTravelTimes from './getTravelTimes'
-import { Destination, ApartmentInfo, Renovation } from '../../types'
-import getDestinations from './getDestinations'
+import { ApartmentInfo, Renovation } from '../../types'
 
-const getLinksFromFile = () => {
-  const links = readFromFile('apartmentLinks.csv', 'CSV')
-  return links
+const getRawApartmentInfo = () => {
+  return readFromFile('rawApartmentInfo.json', 'JSON')
 }
 
 interface InfoTableRow {
@@ -84,7 +79,7 @@ interface ParsedTag {
 
 const searchTags = (string: string, tags: Tags) => {
   let hasTag = false
-  let timeToRenovation: number | undefined
+  let timeOfRenovation: number | undefined
   const lowerCaseString = string.toLowerCase()
   const parsedTags: ParsedTag[] = []
   tags.strict.forEach((tag) => parsedTags.push({ tag, strict: true }))
@@ -97,12 +92,24 @@ const searchTags = (string: string, tags: Tags) => {
       const stringParts = lowerCaseString.split(/[,.]/)
       const matchingPart = stringParts.find((part) => part.includes(firstMatch))
       if (matchingPart) {
-        timeToRenovation = toNumber(matchingPart)
+        if (matchingPart.includes('-')) {
+          timeOfRenovation = matchingPart
+            .split('-')
+            .map((item) => toNumber(item))
+            .reduce((prev, curr) => {
+              if (!curr || curr === 0) {
+                return prev
+              }
+              return curr < prev ? curr : prev
+            })
+        } else {
+          timeOfRenovation = toNumber(matchingPart)
+        }
       }
       hasTag = true
     }
   })
-  return { hasTag, timeToRenovation }
+  return { hasTag, timeOfRenovation }
 }
 
 const parseRenovations = ({
@@ -118,21 +125,22 @@ const parseRenovations = ({
       costPerSqrMeter: 1000,
       tags: {
         strict: ['lvi', 'lvis', 'lvisa', 'vevi', 'lvvias'],
-        parts: ['viermär', 'putki', 'vesijohto', 'linjasan'],
+        parts: ['viermär', 'putki', 'vesijohto', 'linjasan', 'kylpy'],
       },
     },
   ]
   let timeTo: number | null = null
   let renovationComing = false
   let renovationDone = false
+  const currentYear = new Date().getFullYear()
 
   if (renovationsComingString) {
-    const { hasTag, timeToRenovation } = searchTags(
+    const { hasTag, timeOfRenovation } = searchTags(
       renovationsComingString,
       renovationTypes[0].tags
     )
     if (hasTag) {
-      timeTo = timeToRenovation || 1
+      timeTo = timeOfRenovation ? timeOfRenovation - currentYear : 1
       renovationComing = true
     }
   }
@@ -145,7 +153,6 @@ const parseRenovations = ({
   }
 
   if (!renovationComing && !renovationDone) {
-    const currentYear = new Date().getFullYear()
     const buildingAge = currentYear - (buildYear || 0)
     const timeToRenovation = 50 - buildingAge
     if (timeToRenovation > 0) {
@@ -168,8 +175,7 @@ const parseRenovations = ({
 
 const parseAllInfoTableRows = async (
   infoTableRows: InfoTableRow[],
-  additionalFields: string[][],
-  destinations: Destination[]
+  additionalFields: string[][]
 ) => {
   const parsedRows: (string | boolean | number)[][] = []
   infoTableRows.forEach((row) => {
@@ -183,36 +189,15 @@ const parseAllInfoTableRows = async (
   }
   const apartmentInfo = Object.fromEntries([...parsedRows, ...additionalFields])
   apartmentInfo.bigRenovations = parseRenovations(apartmentInfo)
-  apartmentInfo.travelTimes = await getTravelTimes(apartmentInfo.address, destinations)
+  apartmentInfo.travelTimes = []
   return apartmentInfo
 }
 
-const getInfoTableRows = async (link: string): Promise<InfoTableRow[]> => {
-  try {
-    const response = await got(link)
-    const $ = cheerio.load(response.body)
-    const infoTableRows: InfoTableRow[] = []
-    $('.info-table__row').each((_i, item) => {
-      const title = $(item).find('.info-table__title').text()
-      const value = $(item).find('.info-table__value').text()
-      if (title && value) {
-        infoTableRows.push({ title, value })
-      }
-    })
-    return infoTableRows
-  } catch (e) {
-    console.error(e.message, link)
-    return []
-  }
-}
-
 const getApartmentInfos = async () => {
-  const destinations = await getDestinations()
-  const links = getLinksFromFile()
+  const rawApartmentInfo = getRawApartmentInfo()
   const apartmentInfos: ApartmentInfo[] = []
-  for (const link of links) {
-    const infoTableRows = await getInfoTableRows(link)
-    apartmentInfos.push(await parseAllInfoTableRows(infoTableRows, [['link', link]], destinations))
+  for (const { link, infoTableRows } of rawApartmentInfo) {
+    apartmentInfos.push(await parseAllInfoTableRows(infoTableRows, [['link', link]]))
   }
   writeToFile('apartmentInfos.json', apartmentInfos, 'JSON')
 }

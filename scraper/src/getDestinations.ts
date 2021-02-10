@@ -2,7 +2,7 @@ import { getCoordinates } from './getTravelTimes'
 import { Destination } from '../../types'
 
 const getDestinations = async () => {
-  const destinations = ['Aalto Yliopisto', 'Helsingin Yliopisto', 'Papinmäentie 15 B', 'Helsingin rautatieasema']
+  const destinations = ['Aalto Yliopisto', 'Helsingin rautatieasema']
   const destinationsWithCoordinates: Destination[] = []
   for (const destination of destinations) {
     const coordinates = await getCoordinates(destination)
