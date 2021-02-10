@@ -25,7 +25,8 @@ export const readFromFile = (fileName: string, fileType: FileType) => {
 export const writeToFile = (
   fileName: string,
   value: Array<string | Object>,
-  fileType: FileType
+  fileType: FileType,
+  writeToAssets?: boolean
 ) => {
   let newValue: string
   switch (fileType) {
@@ -39,5 +40,8 @@ export const writeToFile = (
       throw Error('Invalid file type')
   }
   fs.writeFileSync(`./src/data/${fileName}`, newValue)
+  if (writeToAssets) {
+    fs.writeFileSync(`../frontend/src/assets/${fileName}`, newValue)
+  }
   console.log(`Succesfully wrote ${fileName}`)
 }

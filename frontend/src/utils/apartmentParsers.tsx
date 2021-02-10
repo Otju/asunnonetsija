@@ -141,11 +141,12 @@ export const getInfoBoxes = (
         },
         {
           header: 'Putkiremontti',
-          info: info.bathroomRenovation
-            ? `${info.bathroomRenovation.timeTo}v päästä, \n
+          info:
+            info.bathroomRenovation && info.bathroomRenovation.timeTo <= 20
+              ? `${info.bathroomRenovation.timeTo}v päästä, \n
             ${formatCurrency(info.bathroomRenovation.cost)},
             ${formatCurrency(info.bathroomRenovation.monthlyCost || 0)}/kk`
-            : 'tehty',
+              : 'yli 20v',
           Icon: IoHammerOutline,
         },
         {

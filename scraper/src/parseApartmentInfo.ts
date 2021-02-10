@@ -2,7 +2,7 @@ import { readFromFile, writeToFile } from './fileEditor'
 import { ApartmentInfo, Renovation } from '../../types'
 
 const getRawApartmentInfo = () => {
-  return readFromFile('rawApartmentInfo.json', 'JSON')
+  return readFromFile('rawApartmentInfos.json', 'JSON')
 }
 
 interface InfoTableRow {
@@ -29,7 +29,7 @@ const parseOtherFees = (string: string): number => {
   const fees: number[] = []
   matching?.forEach((match) => {
     const asNumber = toNumber(match)
-    if (asNumber) {
+    if (asNumber && asNumber < 2000) {
       fees.push(asNumber)
     }
   })
@@ -193,13 +193,30 @@ const parseAllInfoTableRows = async (
   return apartmentInfo
 }
 
+const checkApartmentInfoValidity = (info: ApartmentInfo): boolean => {
+  if ((!info.loanFreePrice && !info.sellingPrice) || info.loanFreePrice < 1000) {
+    return false
+  }
+  return true
+}
+
 const getApartmentInfos = async () => {
   const rawApartmentInfo = getRawApartmentInfo()
   const apartmentInfos: ApartmentInfo[] = []
+  let invalidCount = 0
   for (const { link, infoTableRows } of rawApartmentInfo) {
-    apartmentInfos.push(await parseAllInfoTableRows(infoTableRows, [['link', link]]))
+    if (infoTableRows.length !== 0) {
+      const info = await parseAllInfoTableRows(infoTableRows, [['link', link]])
+      const valid = checkApartmentInfoValidity(info)
+      if (valid) {
+        apartmentInfos.push(info)
+      } else {
+        invalidCount++
+      }
+    }
   }
-  writeToFile('apartmentInfos.json', apartmentInfos, 'JSON')
+  console.log('Invalid apartments', invalidCount)
+  writeToFile('apartmentInfos.json', apartmentInfos, 'JSON', true)
 }
 
 export default getApartmentInfos

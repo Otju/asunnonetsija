@@ -8,7 +8,9 @@ interface InfoTableRow {
   value: string
 }
 
-const getInfoTableRows = async (link: string): Promise<InfoTableRow[]> => {
+const sleep = (waitTime: number) => new Promise((resolve) => setTimeout(resolve, waitTime * 1000))
+
+const getInfoTableRows = async (link: string): Promise<InfoTableRow[] | null> => {
   try {
     const response = await got(link)
     const $ = cheerio.load(response.body)
@@ -22,9 +24,17 @@ const getInfoTableRows = async (link: string): Promise<InfoTableRow[]> => {
     })
     return infoTableRows
   } catch (e) {
-    //console.error(e.message, link)
-    return []
+    const message = e.message
+    if (message.includes('410')) {
+      return null
+    } else if (message.includes('403')) {
+      //console.log('Too many requests, waiting for 2 minutes')
+      await sleep(120)
+    } else {
+      console.error(e.message, link)
+    }
   }
+  return null
 }
 
 interface RawApartmentInfo {
@@ -34,7 +44,7 @@ interface RawApartmentInfo {
 
 const getRawApartmentInfos = async () => {
   const links: string[] = readFromFile('apartmentLinks.csv', 'CSV')
-  const oldInfos: RawApartmentInfo[] = readFromFile('rawApartmentInfo.json', 'JSON')
+  const oldInfos: RawApartmentInfo[] = readFromFile('rawApartmentInfos.json', 'JSON')
   const oldInfosStillOnWebsite = oldInfos.filter(({ link }) => links.includes(link))
   const oldLinks = oldInfos.map((info) => info.link)
   const newLinks = links.filter((link) => !oldLinks.includes(link))
@@ -45,11 +55,13 @@ const getRawApartmentInfos = async () => {
   for (const link of newLinks) {
     progressBar.increment()
     const infoTableRowsForLink = await getInfoTableRows(link)
-    rawApartmentInfo.push({ link, infoTableRows: infoTableRowsForLink })
+    if (infoTableRowsForLink) {
+      rawApartmentInfo.push({ link, infoTableRows: infoTableRowsForLink })
+    }
   }
   const newAndOldInfo = [...oldInfosStillOnWebsite, ...rawApartmentInfo]
   progressBar.stop()
-  writeToFile('rawApartmentInfo.json', newAndOldInfo, 'JSON')
+  writeToFile('rawApartmentInfos.json', newAndOldInfo, 'JSON')
 }
 
 export default getRawApartmentInfos

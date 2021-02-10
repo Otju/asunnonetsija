@@ -25,7 +25,7 @@ export interface ApartmentInfo {
   address: string
   district: string
   sqrMeters: number
-  loanFreePrice?: number
+  loanFreePrice: number
   sellingPrice?: number
   pricePerSqrMeter?: number
   rooms?: string
