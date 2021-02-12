@@ -18,11 +18,12 @@ export const getCoordinates = async (address: string): Promise<Coordinates> => {
 }
 
 const getTravelTimeFromCoordinates = async (from: Coordinates, to: Coordinates) => {
+  console.log(from, to)
   const query = gql`
   {
     plan(
-      from: {lat: ${from.lat}, lon: ${from.lon}}"
-      to: {lat: ${to.lat}, lon: ${to.lon}}",
+      from: {lat: ${from.lat}, lon: ${from.lon}}
+      to: {lat: ${to.lat}, lon: ${to.lon}},
       date: "2021-01-21",
       time: "08:00:00",
     ) {
@@ -39,15 +40,15 @@ const getTravelTimeFromCoordinates = async (from: Coordinates, to: Coordinates) 
   interface durationObject {
     duration: number
   }
+  console.log(data)
   const durations = data.plan.itineraries.map((item: durationObject) => item.duration)
   const bestDuration = Math.round(Math.min(...durations) / 60)
   return bestDuration
 }
 
-const getTravelTimes = async (fromAddress: string, toDestinations: Destination[]) => {
+const getTravelTimes = async (from: Coordinates, toDestinations: Destination[]) => {
   const travelTimes: TravelTime[] = []
   try {
-    const from = await getCoordinates(fromAddress)
     for (const { destination, coordinates } of toDestinations) {
       const duration = await getTravelTimeFromCoordinates(from, coordinates)
       travelTimes.push({ destination, duration })

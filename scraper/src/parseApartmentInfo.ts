@@ -1,5 +1,6 @@
 import { readFromFile, writeToFile } from './fileEditor'
 import { ApartmentInfo, Renovation } from '../../types'
+import { PreInfo } from './getPreInfo'
 
 const getRawApartmentInfo = () => {
   return readFromFile('rawApartmentInfos.json', 'JSON')
@@ -202,11 +203,17 @@ const checkApartmentInfoValidity = (info: ApartmentInfo): boolean => {
 
 const getApartmentInfos = async () => {
   const rawApartmentInfo = getRawApartmentInfo()
+  const preInfo: PreInfo[] = readFromFile('preApartmentInfo.json', 'JSON')
   const apartmentInfos: ApartmentInfo[] = []
   let invalidCount = 0
   for (const { link, infoTableRows } of rawApartmentInfo) {
     if (infoTableRows.length !== 0) {
-      const info = await parseAllInfoTableRows(infoTableRows, [['link', link]])
+      const { imageLink, coordinates } = preInfo.find((info) => info.link === link) || {}
+      const info = await parseAllInfoTableRows(infoTableRows, [
+        ['link', link],
+        ['imageLink', imageLink],
+        ['coordinates', coordinates],
+      ])
       const valid = checkApartmentInfoValidity(info)
       if (valid) {
         apartmentInfos.push(info)

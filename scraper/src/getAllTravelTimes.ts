@@ -11,7 +11,7 @@ const getAllTravelTimes = async () => {
   progressBar.start(apartmentInfos.length, 0)
   for (const apartmentInfo of apartmentInfos) {
     progressBar.increment()
-    const travelTimes = await getTravelTimes(apartmentInfo.address, destinations)
+    const travelTimes = await getTravelTimes(apartmentInfo.coordinates, destinations)
     apartmentInfosWithTravelTimes.push({ ...apartmentInfo, travelTimes })
   }
   progressBar.stop()

@@ -43,6 +43,8 @@ export interface ApartmentInfo {
   bigRenovations: Renovation[]
   renovationsDoneString?: string
   renovationsComingString?: string
+  coordinates: Coordinates
+  imageLink: string
   travelTimes: TravelTime[]
 }
 

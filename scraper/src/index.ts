@@ -1,12 +1,12 @@
-import getApartmentLinks from './getApartmentLinks'
+import getPreInfo from './getPreInfo'
 import getRawApartmentInfo from './getRawApartmentInfo'
 import parseApartmentInfo from './parseApartmentInfo'
 import getAllTravelTimes from './getAllTravelTimes'
 
-const getLinks = async () => {
-  console.log('Getting links')
-  await getApartmentLinks()
-  console.log('Got links')
+const getPre = async () => {
+  console.log('Getting pre-info')
+  await getPreInfo()
+  console.log('Got pre-info')
 }
 
 const getRaw = async () => {
@@ -29,28 +29,32 @@ const getTravelTimes = async () => {
 
 const scriptToRun = process.argv[2]
 
-switch (scriptToRun) {
-  case 'links':
-    console.log('Only links')
-    getLinks()
-    break
-  case 'raw':
-    console.log('Only raw')
-    getRaw()
-    break
-  case 'parse':
-    console.log('Only parse')
-    parse()
-    break
-  case 'travel':
-    console.log('Only travel times')
-    getTravelTimes()
-    break
-  default:
-    console.log('All')
-    getLinks()
-    getRaw()
-    parse()
-    getTravelTimes()
-    break
+const main = async () => {
+  switch (scriptToRun) {
+    case 'pre':
+      console.log('Only pre-info')
+      await getPre()
+      break
+    case 'raw':
+      console.log('Only raw')
+      await getRaw()
+      break
+    case 'parse':
+      console.log('Only parse')
+      await parse()
+      break
+    case 'travel':
+      console.log('Only travel times')
+      await getTravelTimes()
+      break
+    default:
+      console.log('All')
+      await getPre()
+      await getRaw()
+      await parse()
+      await getTravelTimes()
+      break
+  }
 }
+
+main()

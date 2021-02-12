@@ -2,6 +2,7 @@ import got from 'got'
 import cheerio from 'cheerio'
 import { readFromFile, writeToFile } from './fileEditor'
 import progressBar from './progressBar'
+import { PreInfo } from './getPreInfo'
 
 interface InfoTableRow {
   title: string
@@ -43,12 +44,14 @@ interface RawApartmentInfo {
 }
 
 const getRawApartmentInfos = async () => {
-  const links: string[] = readFromFile('apartmentLinks.csv', 'CSV')
+  const preApartmentInfo: PreInfo[] = readFromFile('preApartmentInfo.json', 'JSON')
+  const links = preApartmentInfo.map((info) => info.link)
   const oldInfos: RawApartmentInfo[] = readFromFile('rawApartmentInfos.json', 'JSON')
   const oldInfosStillOnWebsite = oldInfos.filter(({ link }) => links.includes(link))
   const oldLinks = oldInfos.map((info) => info.link)
   const newLinks = links.filter((link) => !oldLinks.includes(link))
   console.log('Reusable raw info', oldInfosStillOnWebsite.length)
+  console.log('Removed old info', oldInfos.length - oldInfosStillOnWebsite.length)
   console.log('New raw info', newLinks.length)
   progressBar.start(newLinks.length, 0)
   const rawApartmentInfo: RawApartmentInfo[] = []
