@@ -7,13 +7,14 @@ import {
 } from '../../../types'
 import { generalFilterFields, travelFilterFields } from '../utils/constants'
 import FilterSettings from './FilterSettings'
+import MapPage from './MapPage'
 
 const Tabs: React.FC<{
   apartmentInfos: ParsedApartmentInfo[]
   setSearchOptions: Function
   searchOptions: SearchOptions
 }> = ({ apartmentInfos, setSearchOptions, searchOptions }) => {
-  const [tab, setTab] = useState(0)
+  const [tab, setTab] = useState(3)
 
   const setLoanVariables = (loanSettings: LoanSettingsType) => {
     setSearchOptions({ ...searchOptions, loanSettings })
@@ -41,7 +42,7 @@ const Tabs: React.FC<{
         />
       )
       break
-    default:
+    case 2:
       tabToShow = (
         <LoanSettings
           loanVariables={searchOptions.loanSettings}
@@ -49,11 +50,22 @@ const Tabs: React.FC<{
         />
       )
       break
+    case 3:
+      tabToShow = (
+        <MapPage
+          houseCoordinates={apartmentInfos.map((info) => info.coordinates).filter((item) => item)}
+        />
+      )
+      break
+    default:
+      tabToShow = <>Page missing</>
+      break
   }
   const tabs = [
     { name: 'Haku', value: 0 },
     { name: 'Matka-ajat', value: 1 },
     { name: 'Laina', value: 2 },
+    { name: 'Kartta', value: 3 },
   ]
   return (
     <div className="bordered">

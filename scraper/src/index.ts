@@ -52,7 +52,7 @@ const main = async () => {
       await getPre()
       await getRaw()
       await parse()
-      await getTravelTimes()
+      //await getTravelTimes()
       break
   }
 }

@@ -2,8 +2,6 @@ import { PossibleDestination, FilterField } from '../../../types'
 
 export const possibleDestinations: PossibleDestination[] = [
   'Aalto Yliopisto',
-  'Helsingin Yliopisto',
-  'Papinmäentie 15 B',
   'Helsingin rautatieasema',
 ]
 

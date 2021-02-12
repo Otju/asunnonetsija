@@ -195,10 +195,17 @@ const parseAllInfoTableRows = async (
 }
 
 const checkApartmentInfoValidity = (info: ApartmentInfo): boolean => {
-  if ((!info.loanFreePrice && !info.sellingPrice) || info.loanFreePrice < 1000) {
-    return false
+  const { loanFreePrice, sellingPrice, sqrMeters, pricePerSqrMeter } = info
+  let isValid = true
+  if ((!loanFreePrice && !sellingPrice) || loanFreePrice < 1000) {
+    isValid = false
   }
-  return true
+  ;[sqrMeters, pricePerSqrMeter].forEach((field) => {
+    if (!field || field === 0) {
+      isValid = false
+    }
+  })
+  return isValid
 }
 
 const getApartmentInfos = async () => {

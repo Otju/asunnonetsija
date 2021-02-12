@@ -146,7 +146,7 @@ export const getInfoBoxes = (
               ? `${info.bathroomRenovation.timeTo}v päästä, \n
             ${formatCurrency(info.bathroomRenovation.cost)},
             ${formatCurrency(info.bathroomRenovation.monthlyCost || 0)}/kk`
-              : 'yli 20v',
+              : 'yli 20v päästä',
           Icon: IoHammerOutline,
         },
         {
