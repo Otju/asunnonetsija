@@ -10,10 +10,12 @@ import {
 import { getApartmentInfos } from './utils/apartmentParsers'
 import Tabs from './components/Tabs'
 import { possibleDestinations } from './utils/constants'
+import inside from 'point-in-polygon'
 
 const App = () => {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     filterSettings: [],
+    points: [],
   })
 
   const apartmentInfos = getApartmentInfos(searchOptions?.loanSettings)
@@ -33,12 +35,21 @@ const App = () => {
         }
       }
     })
+    const points = searchOptions.points
+    if (points.length >= 3) {
+      const { lat, lon } = apartment.coordinates
+      const polygon = points.map(({ coordinates }) => [coordinates.lat, coordinates.lng])
+      const insideArea = inside([lat, lon], polygon)
+      if (!insideArea) {
+        keep = false
+      }
+    }
     return keep
   }
 
   const filteredApartmentInfos = apartmentInfos
     .filter(filterApartments)
-    .sort((a, b) => a.totalFees - b.totalFees)
+    .sort((a: ParsedApartmentInfo, b: ParsedApartmentInfo) => a.totalFees - b.totalFees)
 
   return (
     <div className="pageBackground">

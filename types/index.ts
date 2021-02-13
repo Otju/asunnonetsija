@@ -1,3 +1,5 @@
+import { Points } from '../frontend/src/components/MapPage'
+
 export interface TravelTime {
   destination: string
   duration: number
@@ -92,6 +94,7 @@ export interface LoanSettings {
 export interface SearchOptions {
   filterSettings: FilterSetting[]
   loanSettings?: LoanSettings
+  points: Points[]
 }
 
 export interface District {
