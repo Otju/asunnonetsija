@@ -1,6 +1,8 @@
 import { readFromFile, writeToFile } from './fileEditor'
-import { ApartmentInfo, Renovation } from '../../types'
+import { ApartmentInfo, Coordinates, Renovation, District } from '../../types'
 import { PreInfo } from './getPreInfo'
+import inside from 'point-in-polygon'
+import progressBar from './progressBar'
 
 const getRawApartmentInfo = () => {
   return readFromFile('rawApartmentInfos.json', 'JSON')
@@ -174,9 +176,29 @@ const parseRenovations = ({
   return renovations
 }
 
+interface AdditionalFields {
+  link: string
+  imageLink?: string
+  coordinates?: Coordinates
+}
+
+const getDisctrictsFromCoordinates = (coordinates: Coordinates) => {
+  const smallDistricts: District[] = readFromFile('smallDistricts.json', 'JSON')
+  const bigDistricts: District[] = readFromFile('bigDistricts.json', 'JSON')
+  const { lat, lon } = coordinates
+  const apartmentCoordinates = [lon, lat]
+  const smallDistrict = smallDistricts.find((district) => {
+    return inside(apartmentCoordinates, district.coordinates)
+  })?.name
+  const bigDistrict = bigDistricts.find((district) => {
+    return inside(apartmentCoordinates, district.coordinates)
+  })?.name
+  return { smallDistrict, bigDistrict }
+}
+
 const parseAllInfoTableRows = async (
   infoTableRows: InfoTableRow[],
-  additionalFields: string[][]
+  additionalFields: AdditionalFields
 ) => {
   const parsedRows: (string | boolean | number)[][] = []
   infoTableRows.forEach((row) => {
@@ -185,16 +207,26 @@ const parseAllInfoTableRows = async (
       parsedRows.push(parsedRow)
     }
   })
-  if (parsedRows.length === 0) {
+  if (parsedRows.length === 0 || !additionalFields.coordinates || !additionalFields.imageLink) {
     return
   }
-  const apartmentInfo = Object.fromEntries([...parsedRows, ...additionalFields])
+  let apartmentInfo = Object.fromEntries([...parsedRows])
+  const districts = getDisctrictsFromCoordinates(additionalFields.coordinates)
+  apartmentInfo = {
+    ...apartmentInfo,
+    ...additionalFields,
+    ...districts,
+  }
   apartmentInfo.bigRenovations = parseRenovations(apartmentInfo)
   apartmentInfo.travelTimes = []
+  delete apartmentInfo.renovationsDoneString
   return apartmentInfo
 }
 
 const checkApartmentInfoValidity = (info: ApartmentInfo): boolean => {
+  if (!info) {
+    return false
+  }
   const { loanFreePrice, sellingPrice, sqrMeters, pricePerSqrMeter } = info
   let isValid = true
   if ((!loanFreePrice && !sellingPrice) || loanFreePrice < 1000) {
@@ -213,14 +245,16 @@ const getApartmentInfos = async () => {
   const preInfo: PreInfo[] = readFromFile('preApartmentInfo.json', 'JSON')
   const apartmentInfos: ApartmentInfo[] = []
   let invalidCount = 0
+  progressBar.start(rawApartmentInfo.length, 0)
   for (const { link, infoTableRows } of rawApartmentInfo) {
     if (infoTableRows.length !== 0) {
+      progressBar.increment()
       const { imageLink, coordinates } = preInfo.find((info) => info.link === link) || {}
-      const info = await parseAllInfoTableRows(infoTableRows, [
-        ['link', link],
-        ['imageLink', imageLink],
-        ['coordinates', coordinates],
-      ])
+      const info = await parseAllInfoTableRows(infoTableRows, {
+        link,
+        imageLink,
+        coordinates,
+      })
       const valid = checkApartmentInfoValidity(info)
       if (valid) {
         apartmentInfos.push(info)
@@ -229,6 +263,8 @@ const getApartmentInfos = async () => {
       }
     }
   }
+  progressBar.stop()
+  console.log('')
   console.log('Invalid apartments', invalidCount)
   writeToFile('apartmentInfos.json', apartmentInfos, 'JSON', true)
 }

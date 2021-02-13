@@ -8,6 +8,7 @@ import {
 import { generalFilterFields, travelFilterFields } from '../utils/constants'
 import FilterSettings from './FilterSettings'
 import MapPage from './MapPage'
+import smallDistricts from '../assets/smallDistricts.json'
 
 const Tabs: React.FC<{
   apartmentInfos: ParsedApartmentInfo[]
@@ -19,6 +20,12 @@ const Tabs: React.FC<{
   const setLoanVariables = (loanSettings: LoanSettingsType) => {
     setSearchOptions({ ...searchOptions, loanSettings })
   }
+
+  const districts = smallDistricts.filter(({ name }) =>
+    apartmentInfos.find(({ smallDistrict }) => {
+      return smallDistrict === name
+    })
+  )
 
   let tabToShow
   switch (tab) {
@@ -54,6 +61,7 @@ const Tabs: React.FC<{
       tabToShow = (
         <MapPage
           houseCoordinates={apartmentInfos.map((info) => info.coordinates).filter((item) => item)}
+          districts={districts}
         />
       )
       break

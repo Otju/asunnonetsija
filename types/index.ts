@@ -46,6 +46,8 @@ export interface ApartmentInfo {
   coordinates: Coordinates
   imageLink: string
   travelTimes: TravelTime[]
+  smallDistrict: string
+  bigDistrict: string
 }
 
 export interface ParsedApartmentInfo extends ApartmentInfo {
@@ -90,4 +92,9 @@ export interface LoanSettings {
 export interface SearchOptions {
   filterSettings: FilterSetting[]
   loanSettings?: LoanSettings
+}
+
+export interface District {
+  name: string
+  coordinates: number[][]
 }
