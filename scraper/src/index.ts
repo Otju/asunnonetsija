@@ -2,6 +2,9 @@ import getPreInfo from './getPreInfo'
 import getRawApartmentInfo from './getRawApartmentInfo'
 import parseApartmentInfo from './parseApartmentInfo'
 import getAllTravelTimes from './getAllTravelTimes'
+import { request } from 'graphql-request'
+import { readFromFile } from './fileEditor'
+import { ApartmentInfo } from '../../types'
 
 const getPre = async () => {
   console.log('Getting pre-info')
@@ -27,6 +30,60 @@ const getTravelTimes = async () => {
   console.log('Got travel times')
 }
 
+const writeToDB = async () => {
+  const parsedApartments: ApartmentInfo[] = readFromFile('apartmentInfos.json', 'JSON')
+  const apartments = parsedApartments
+    .map(
+      ({
+        renovationsComingString,
+        renovationsDoneString,
+        coordinates,
+        bigRenovations,
+        travelTimes,
+        ...otherFields
+      }) => {
+        return { ...otherFields }
+      }
+    )
+    .filter(
+      ({
+        link,
+        address,
+        district,
+        sqrMeters,
+        loanFreePrice,
+        imageLink,
+        smallDistrict,
+        bigDistrict,
+      }) => {
+        return (
+          link &&
+          address &&
+          district &&
+          sqrMeters &&
+          loanFreePrice &&
+          imageLink &&
+          smallDistrict &&
+          bigDistrict
+        )
+      }
+    )
+  const query = `
+  mutation updateApartments ($apartments: [ApartmentInput!]!) {
+    updateApartments(apartments: $apartments)
+  }`
+  const variables = {
+    apartments,
+  }
+  try {
+    const response = await request('http://localhost:4000/', query, variables)
+    console.log(response)
+    console.log('Wrote info to DB')
+  } catch (e) {
+    console.log(e.message.slice(0, 2000))
+  }
+}
+
 const scriptToRun = process.argv[2]
 
 const main = async () => {
@@ -46,6 +103,10 @@ const main = async () => {
     case 'travel':
       console.log('Only travel times')
       await getTravelTimes()
+      break
+    case 'db':
+      console.log('Only write to db')
+      await writeToDB()
       break
     default:
       console.log('All')

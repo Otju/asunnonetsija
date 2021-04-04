@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    command: npm start
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend/:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./types/:/usr/src/types
+
+  backend:
+    build: ./backend
+    command: npm start
+    ports:
+      - 4000:4000
+    volumes:
+      - ./backend/:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./types/:/usr/src/types
+
+  otp-hsl:
+    image: hsldevcom/opentripplanner
+    environment:
+      - ROUTER_NAME=hsl
+      - JAVA_OPTS=-Xmx5g
+      - ROUTER_DATA_CONTAINER_URL=https://api.digitransit.fi/routing-data/v2/hsl
+    ports:
+      - 9080:8080
+    logging:
+      driver: none
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD
+    ports:
+      - 5432:5432
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d/
+
+  adminer:
+    image: adminer
+    ports:
+      - 5000:8080

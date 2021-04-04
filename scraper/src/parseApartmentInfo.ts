@@ -267,6 +267,7 @@ const getApartmentInfos = async () => {
   console.log('')
   console.log('Invalid apartments', invalidCount)
   writeToFile('apartmentInfos.json', apartmentInfos, 'JSON', true)
+  return apartmentInfos
 }
 
 export default getApartmentInfos

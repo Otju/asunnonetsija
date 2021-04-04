@@ -5,17 +5,22 @@ import { readFromFile, writeToFile } from './fileEditor'
 import progressBar from './progressBar'
 
 const getAllTravelTimes = async () => {
-  const apartmentInfos: ApartmentInfo[] = readFromFile('apartmentInfos.json', 'JSON')
+  let apartmentInfos: ApartmentInfo[] = readFromFile('apartmentInfos.json', 'JSON')
   const destinations = await getDestinations()
+  apartmentInfos = apartmentInfos.slice(0, 10)
   const apartmentInfosWithTravelTimes: ApartmentInfo[] = []
   progressBar.start(apartmentInfos.length, 0)
-  for (const apartmentInfo of apartmentInfos) {
-    progressBar.increment()
-    const travelTimes = await getTravelTimes(apartmentInfo.coordinates, destinations)
-    apartmentInfosWithTravelTimes.push({ ...apartmentInfo, travelTimes })
-  }
+  await Promise.all(
+    apartmentInfos.map(async (apartmentInfo) => {
+      const travelTimes = await getTravelTimes(apartmentInfo.coordinates, destinations)
+      apartmentInfosWithTravelTimes.push({ ...apartmentInfo, travelTimes })
+      progressBar.increment()
+      return null
+    })
+  )
+
   progressBar.stop()
-  writeToFile('apartmentInfos.json', apartmentInfosWithTravelTimes, 'JSON')
+  writeToFile('apartmentInfosWithTravelTimes.json', apartmentInfosWithTravelTimes, 'JSON')
 }
 
 export default getAllTravelTimes

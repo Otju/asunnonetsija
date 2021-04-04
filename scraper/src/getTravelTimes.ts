@@ -18,14 +18,11 @@ export const getCoordinates = async (address: string): Promise<Coordinates> => {
 }
 
 const getTravelTimeFromCoordinates = async (from: Coordinates, to: Coordinates) => {
-  console.log(from, to)
   const query = gql`
   {
     plan(
       from: {lat: ${from.lat}, lon: ${from.lon}}
       to: {lat: ${to.lat}, lon: ${to.lon}},
-      date: "2021-01-21",
-      time: "08:00:00",
     ) {
       itineraries {
         duration
@@ -33,17 +30,19 @@ const getTravelTimeFromCoordinates = async (from: Coordinates, to: Coordinates) 
     }
   }
 `
-  const data = await request(
-    'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql',
-    query
-  )
-  interface durationObject {
-    duration: number
+  try {
+    const data = await request('http://localhost:4000/otp/routers/hsl/index/graphql', query)
+    interface durationObject {
+      duration: number
+    }
+    const durations = data.plan.itineraries.map((item: durationObject) => item.duration)
+    const bestDuration = Math.round(Math.min(...durations) / 60)
+    console.log(bestDuration)
+    return bestDuration
+  } catch (e) {
+    console.log(e.message)
+    return 0
   }
-  console.log(data)
-  const durations = data.plan.itineraries.map((item: durationObject) => item.duration)
-  const bestDuration = Math.round(Math.min(...durations) / 60)
-  return bestDuration
 }
 
 const getTravelTimes = async (from: Coordinates, toDestinations: Destination[]) => {
