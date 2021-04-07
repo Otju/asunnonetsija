@@ -21,16 +21,21 @@ services:
       - /usr/src/app/node_modules
       - ./types/:/usr/src/types
 
-  otp-hsl:
-    image: hsldevcom/opentripplanner
+  routefinder:
+    image: hsldevcom/opentripplanner:prod
     environment:
+      - ROUTER_DATA_CONTAINER_URL=http://hsl-data-container:8080
       - ROUTER_NAME=hsl
-      - JAVA_OPTS=-Xmx5g
-      - ROUTER_DATA_CONTAINER_URL=https://api.digitransit.fi/routing-data/v2/hsl
+      - JAVA_OPTS=-Xmx6g
     ports:
       - 9080:8080
-    logging:
-      driver: none
+
+  hsl-data-container:
+    image: hsldevcom/opentripplanner-data-container-hsl:prod
+    ports:
+      - 8080:8080
+    volumes:
+      - ./routefinder/graph-hsl-4edabc8e2571faae4345e7cc686b2215fe1acd0e.zip:/var/www/localhost/htdocs/graph-hsl-4edabc8e2571faae4345e7cc686b2215fe1acd0e.zip
 
   db:
     image: postgres:latest

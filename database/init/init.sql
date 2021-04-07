@@ -21,20 +21,21 @@ CREATE TABLE "apartments"(
   "otherFees" NUMERIC,
   "imageLink" TEXT NOT NULL,
   "smallDistrict" TEXT NOT NULL,
-  "bigDistrict" TEXT NOT NULL
+  "bigDistrict" TEXT NOT NULL,
+  "bigRenovations" JSON NOT NULL,
+  "coordinates" JSON NOT NULL
 );
 
 CREATE TABLE "travelTimes"(
   "id" SERIAL PRIMARY KEY,
-  "startLocation" TEXT NOT NULL,
-  "endLocation" TEXT NOT NULL,
+  "address" TEXT NOT NULL,
+  "destination" TEXT NOT NULL,
   "duration" INT NOT NULL
 );
 
 
-CREATE TABLE "endLocations"(
-  "id" SERIAL PRIMARY KEY,
-  "address" TEXT NOT NULL,
-  "longitude" NUMERIC NOT NULL,
-  "latitude" NUMERIC NOT NULL
+CREATE TABLE "destinations"(
+  "destination" TEXT PRIMARY KEY,
+  "lon" NUMERIC NOT NULL,
+  "lat" NUMERIC NOT NULL
 );

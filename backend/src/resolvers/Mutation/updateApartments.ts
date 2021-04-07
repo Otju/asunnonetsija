@@ -4,7 +4,11 @@ import { getClient } from '../../db'
 const updateApartments = async (_root, args) => {
   const client = await getClient()
   try {
-    const apartments = args.apartments
+    const apartments = args.apartments.map(({ bigRenovations, ...otherFields }) => ({
+      ...otherFields,
+      bigRenovations: JSON.stringify(bigRenovations),
+    }))
+    console.log(apartments[1])
     const rowNames = [
       ['link', 'text'],
       ['address', 'text'],
@@ -27,6 +31,8 @@ const updateApartments = async (_root, args) => {
       ['imageLink', 'text'],
       ['smallDistrict', 'text'],
       ['bigDistrict', 'text'],
+      ['bigRenovations', 'text'],
+      ['coordinates', 'json'],
     ]
     const rowNameString = rowNames.map((rowName) => `"${rowName[0]}"`).join(', ')
     const rowParamsString = rowNames.map((rowName, i) => `$${i + 1}::${rowName[1]}[]`).join(', ')

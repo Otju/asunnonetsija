@@ -5,6 +5,7 @@ import getAllTravelTimes from './getAllTravelTimes'
 import { request } from 'graphql-request'
 import { readFromFile } from './fileEditor'
 import { ApartmentInfo } from '../../types'
+import { ApartmentInfo as ApartmentInfoGuard } from './runtypes'
 
 const getPre = async () => {
   console.log('Getting pre-info')
@@ -37,37 +38,18 @@ const writeToDB = async () => {
       ({
         renovationsComingString,
         renovationsDoneString,
-        coordinates,
         bigRenovations,
         travelTimes,
         ...otherFields
       }) => {
-        return { ...otherFields }
+        bigRenovations = bigRenovations.length
+          ? bigRenovations
+          : [{ type: 'Putkiremontti', cost: 5000, timeTo: 10 }]
+        return { bigRenovations, ...otherFields }
       }
     )
-    .filter(
-      ({
-        link,
-        address,
-        district,
-        sqrMeters,
-        loanFreePrice,
-        imageLink,
-        smallDistrict,
-        bigDistrict,
-      }) => {
-        return (
-          link &&
-          address &&
-          district &&
-          sqrMeters &&
-          loanFreePrice &&
-          imageLink &&
-          smallDistrict &&
-          bigDistrict
-        )
-      }
-    )
+    .filter((apartment) => ApartmentInfoGuard.guard(apartment))
+  console.log('Aparmentcount', apartments.length)
   const query = `
   mutation updateApartments ($apartments: [ApartmentInput!]!) {
     updateApartments(apartments: $apartments)

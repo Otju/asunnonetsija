@@ -1,6 +1,5 @@
 import { calculateMonthlyFee } from './loanCalculator'
 import { Renovation } from '../../../types'
-import apartmentInfos from '../assets/apartmentInfos.json'
 import {
   IoHomeOutline,
   IoPricetagOutline,
@@ -11,13 +10,16 @@ import {
   IoHourglassOutline,
   IoBusOutline,
 } from 'react-icons/io5'
-import { ParsedApartmentInfo, LoanSettings } from '../../../types'
+import { ParsedApartmentInfo, LoanSettings, ApartmentInfo } from '../../../types'
 import formatCurrency from './currencyFormatter'
 import calculateHousingBenefit from './housingBenefitCalculator'
 import { ReactNode } from 'react'
 import { IconType } from 'react-icons/lib'
 
-export const getApartmentInfos = (loanSettings: LoanSettings | undefined) => {
+export const getApartmentInfos = (
+  apartmentInfos: ApartmentInfo[],
+  loanSettings: LoanSettings | undefined
+) => {
   return apartmentInfos.map((info) => {
     const loanFee = info.loanFee || 0
     const maintananceFee = info.maintananceFee || 0
@@ -38,7 +40,6 @@ export const getApartmentInfos = (loanSettings: LoanSettings | undefined) => {
     const address = info.address.split(',')[0]
     const parts = info.address.split(' ')
     const city = parts[parts.length - 1]
-
     const housingBenefit = calculateHousingBenefit({
       city,
       totalMonthlyEarnings: 1000,

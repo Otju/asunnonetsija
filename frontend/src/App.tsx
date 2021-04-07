@@ -11,6 +11,8 @@ import { getApartmentInfos } from './utils/apartmentParsers'
 import Tabs from './components/Tabs'
 import { possibleDestinations } from './utils/constants'
 import inside from 'point-in-polygon'
+import { useQuery } from 'urql'
+import allApartments from './graphql/queries/allApartments'
 
 const App = () => {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
@@ -18,7 +20,16 @@ const App = () => {
     points: [],
   })
 
-  const apartmentInfos = getApartmentInfos(searchOptions?.loanSettings)
+  const [result] = useQuery({
+    query: allApartments,
+  })
+
+  const { data, fetching, error } = result
+
+  if (fetching) return <p>Loading...</p>
+  if (error) return <p>Oh no... {error.message}</p>
+
+  const apartmentInfos = getApartmentInfos(data.allApartments, searchOptions?.loanSettings)
 
   const filterApartments = (apartment: ParsedApartmentInfo): boolean => {
     let keep = true

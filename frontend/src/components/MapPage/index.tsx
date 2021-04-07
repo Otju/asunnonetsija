@@ -5,7 +5,9 @@ import ReactDOMServer from 'react-dom/server'
 import { ReactComponent as Icon } from '../../assets/houseLocation.svg'
 import { Coordinates, District } from '../../../../types'
 import { useState } from 'react'
-import { DistrictPolygons, DraggablePoint, Detector } from './components'
+import { DistrictPolygons, Detector } from './components'
+import calculateDistance from 'haversine-distance'
+
 interface BoundsCoordinates {
   lat: number
   lng: number
@@ -23,65 +25,12 @@ export interface Points {
 const MapPage: React.FC<{
   houseCoordinates: Coordinates[]
   districts: District[]
-  setPoints: Function
   points: Points[]
-}> = ({ houseCoordinates, districts, setPoints, points }) => {
-  const iconAsHTML = ReactDOMServer.renderToString(<Icon width={50} height={60} />)
-  const iconHouse = new L.DivIcon({
-    html: iconAsHTML,
-    iconAnchor: [25, 60],
-    className: 'dummy',
-  })
+}> = ({ houseCoordinates, districts, points }) => {
   const defaultZoom = 10
   const [bounds, setBounds] = useState<Bounds>()
   const [zoom, setZoom] = useState(defaultZoom)
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
-
-  const insert = (arr: any[], index: number, newItem: any) => [
-    ...arr.slice(0, index),
-    newItem,
-    ...arr.slice(index),
-  ]
-
-  const deg2rad = (deg: number) => {
-    return deg * (Math.PI / 180)
-  }
-  const getDistance = (from: LatLng, to: LatLng) => {
-    const lat1 = from.lat
-    const lat2 = to.lat
-    const lon1 = from.lng
-    const lon2 = to.lng
-    const earthRadius = 6371
-    const dLat = deg2rad(lat2 - lat1)
-    const dLon = deg2rad(lon2 - lon1)
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    return earthRadius * c
-  }
-
-  const handleClick = (coordinates: LatLng) => {
-    const newPoint = { id: points.length /*Date.now()*/, coordinates }
-    if (points.length >= 3) {
-      const distanceToOtherPoints = points.map((point) => {
-        const distance = getDistance(coordinates, point.coordinates)
-        return { ...point, distance }
-      })
-      const [closest, second] = distanceToOtherPoints
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, 2)
-      const indexOfClosest = points.findIndex(({ id }) => id === closest.id)
-      const indexOfSecond = points.findIndex(({ id }) => id === second.id)
-      const index = indexOfSecond > indexOfClosest ? indexOfSecond + 1 : indexOfClosest + 1
-      const newPoints = insert(points, index, newPoint)
-      console.log(indexOfClosest, indexOfSecond, newPoints)
-      setPoints(newPoints)
-    } else {
-      const newPoints = [...points, newPoint]
-      setPoints(newPoints)
-    }
-  }
 
   const handleDistrictSelect = (name: string, selected: boolean) => {
     const newDistricts = selected
@@ -94,37 +43,82 @@ const MapPage: React.FC<{
 
   let markerCoordinates: Coordinates[] = []
 
-  let markers
-  if (zoom > 13) {
-    houseCoordinates.forEach(({ lat, lon }) => {
-      if (!markerCoordinates.find((item) => item.lat === lat && item.lon === lon)) {
-        markerCoordinates.push({ lat, lon })
-      }
-    })
+  houseCoordinates.forEach(({ lat, lon }) => {
+    if (!markerCoordinates.find((item) => item.lat === lat && item.lon === lon)) {
+      markerCoordinates.push({ lat, lon })
+    }
+  })
 
-    markerCoordinates = markerCoordinates.filter(({ lat, lon }) => {
-      if (!bounds) {
-        return false
-      }
-      return (
-        lat < bounds._northEast.lat &&
-        lat > bounds._southWest.lat &&
-        lon < bounds._northEast.lng &&
-        lon > bounds._southWest.lng
+  markerCoordinates = markerCoordinates.filter(({ lat, lon }) => {
+    if (!bounds) {
+      return false
+    }
+    return (
+      lat < bounds._northEast.lat &&
+      lat > bounds._southWest.lat &&
+      lon < bounds._northEast.lng &&
+      lon > bounds._southWest.lng
+    )
+  })
+
+  const metersPerPx = (156543.03392 * Math.cos((60.1733244 * Math.PI) / 180)) / Math.pow(2, zoom)
+  interface groupedMarker {
+    lat: number
+    lon: number
+    count: number
+  }
+
+  const groupedMarkers: groupedMarker[] = []
+  let remainingMarkers = markerCoordinates
+
+  const sameCoordinates = (cor1: Coordinates, cor2: Coordinates) =>
+    cor1.lat === cor2.lat && cor1.lon === cor2.lon
+
+  markerCoordinates.forEach((coordinates1) => {
+    if (remainingMarkers.find((coordinates) => sameCoordinates(coordinates1, coordinates))) {
+      const closeByMarkers = remainingMarkers.filter((coordinates2) => {
+        const distance = calculateDistance(coordinates1, coordinates2)
+        const disanceInPx = distance / metersPerPx
+        return disanceInPx <= 60
+      })
+      groupedMarkers.push({ ...coordinates1, count: closeByMarkers.length })
+      remainingMarkers = remainingMarkers.filter(
+        (remainingCoordinates) =>
+          !closeByMarkers.find((closeByCoordinates) =>
+            sameCoordinates(remainingCoordinates, closeByCoordinates)
+          )
       )
-    })
-    markers = markerCoordinates.map(({ lat, lon }, i) => (
-      <Marker position={[lat, lon]} icon={iconHouse} key={i} />
-    ))
-  }
+    }
+  })
 
-  const handleDrag = (coordinates: LatLng, id: number) => {
-    const newPoints = points.map((point) => (point.id === id ? { id, coordinates } : point))
-    setPoints(newPoints)
-  }
+  const iconAsHTML = ReactDOMServer.renderToString(<Icon width={50} height={60} />)
+  const iconHouse = new L.DivIcon({
+    html: iconAsHTML,
+    iconAnchor: [25, 60],
+    className: 'dummy',
+  })
+
+  const markers = groupedMarkers.map(({ lat, lon, count }, i) => {
+    const size = 40 + count * 0.1
+    const icon =
+      count === 1
+        ? iconHouse
+        : new L.DivIcon({
+            html: `<svg width="${size}" height="${size}"><circle cx="${size / 2}" cy="${
+              size / 2
+            }" r="${size * 0.4}" fill="#black" fill-opacity="0.7"/>
+                      <text x="50%" y="50%" text-anchor="middle" fill="white" font-size="${
+                        size * 0.4
+                      }px" font-family="Arial" dy=".3em">${count}</text>
+                   </svg>`,
+            iconAnchor: [size / 2, size / 2],
+            className: 'dummy',
+          })
+    return <Marker position={[lat, lon]} icon={icon} key={i} />
+  })
 
   return (
-    <MapContainer center={[60.232, 24.91]} zoom={defaultZoom} scrollWheelZoom={false}>
+    <MapContainer center={[60.232, 24.91]} zoom={defaultZoom}>
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -139,10 +133,7 @@ const MapPage: React.FC<{
         positions={points.map(({ coordinates }) => coordinates)}
         pathOptions={{ color: 'red' }}
       />
-      {points.map(({ coordinates, id }) => (
-        <DraggablePoint coordinates={coordinates} handleDrag={handleDrag} id={id} />
-      ))}
-      <Detector setBounds={setBounds} setZoom={setZoom} handleClick={handleClick} />
+      <Detector setBounds={setBounds} setZoom={setZoom} handleClick={() => {}} />
     </MapContainer>
   )
 }

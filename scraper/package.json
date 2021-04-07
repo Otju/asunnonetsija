@@ -6,8 +6,6 @@
   "scripts": {
     "ts-node": "ts-node",
     "start": "nodemon ./src/index.ts",
-    "getApartments": "node -e 'require(\"./src/index.ts\").getApartments()'",
-    "getLinks": "node -e \"require('./src/index.ts').getLinks()\"",
     "api": "docker run --rm --name otp-hsl -p 4000:8080 -e ROUTER_NAME=hsl -e JAVA_OPTS=-Xmx5g -e ROUTER_DATA_CONTAINER_URL=https://api.digitransit.fi/routing-data/v2/hsl hsldevcom/opentripplanner"
   },
   "author": "Otju",
@@ -29,6 +27,7 @@
     "graphql-request": "^3.4.0",
     "node-fetch": "^2.6.1",
     "point-in-polygon": "^1.0.1",
-    "puppeteer": "^5.5.0"
+    "puppeteer": "^5.5.0",
+    "runtypes": "^6.0.0"
   }
 }

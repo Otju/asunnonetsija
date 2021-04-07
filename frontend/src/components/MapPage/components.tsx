@@ -1,6 +1,4 @@
-import { Marker, useMapEvents, useMap, Polygon } from 'react-leaflet'
-import L, { LatLng, LeafletEventHandlerFnMap } from 'leaflet'
-import ReactDOMServer from 'react-dom/server'
+import { useMapEvents, useMap, Polygon } from 'react-leaflet'
 import { District } from '../../../../types'
 import { useEffect } from 'react'
 
@@ -33,39 +31,12 @@ export const DistrictPolygons: React.FC<{
   )
 }
 
-export const DraggablePoint: React.FC<{
-  coordinates: LatLng
-  handleDrag: Function
-  id: number
-}> = ({ coordinates, handleDrag, id }) => {
-  const circle = (
-    <svg height="20" width="20">
-      <circle cx="10" cy="10" r="10" fill="red" />
-    </svg>
-  )
-
-  const circleAsHtml = ReactDOMServer.renderToString(circle)
-  const circleIcon = new L.DivIcon({
-    html: circleAsHtml,
-    iconAnchor: [10, 10],
-    className: 'dummy',
-  })
-
-  const eventHandlers: LeafletEventHandlerFnMap = {
-    dragend: (e) => {
-      handleDrag(e.target.getLatLng(), id)
-    },
-  }
-  return <Marker position={coordinates} eventHandlers={eventHandlers} draggable icon={circleIcon} />
-}
-
 export const Detector: React.FC<{
   setBounds: Function
   setZoom: Function
   handleClick: Function
 }> = ({ setBounds, setZoom, handleClick }) => {
   const map = useMap()
-  map.doubleClickZoom.disable()
   useEffect(() => {
     setBounds(map.getBounds())
   }, [map, setBounds])

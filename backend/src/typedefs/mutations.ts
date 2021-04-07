@@ -1,6 +1,6 @@
 const mutations = `
 type Mutation {
-  addEndLocation(address: String!): String!
+  addDestination(destination: String!): String
   updateApartments(apartments: [ApartmentInput!]!): String
 }
 `
