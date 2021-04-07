@@ -15,10 +15,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": true,
     "jsx": "react-jsx",
-    "allowJs": true,
-    "rootDir": "src",
-    "outDir": "dist"
+    "allowJs": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [{ "@types": "../../types" }]
 }

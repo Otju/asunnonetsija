@@ -1,9 +1,55 @@
 import { ApolloError } from 'apollo-server'
 import { getClient } from '../../db'
-import { ApartmentInfo } from '../../../../types'
 
 interface Args {
   apartments: ApartmentInfo[]
+}
+
+interface TravelTime {
+  destination: string
+  duration: number
+}
+
+interface Coordinates {
+  lat: number
+  lon: number
+}
+
+interface Renovation {
+  type: string
+  cost: number
+  timeTo: number
+  monthlyCost?: number
+}
+
+interface ApartmentInfo {
+  link: string
+  address: string
+  district: string
+  sqrMeters: number
+  loanFreePrice: number
+  sellingPrice?: number
+  pricePerSqrMeter?: number
+  rooms?: string
+  roomAmount?: number
+  condition?: string //'Erinomainen' | 'Hyvä' | 'Tyydyttävä' | 'Välttävä' | 'Huono' | 'Uusi'
+  houseType?: string //'Kerrostalo' | 'Rivitalo' | 'Paritalo' | 'Omakotitalo' | 'Puutalo-osake'
+  livingType?: string //'Omistus' | 'Osaomistus' | 'Asumisoikeus'
+  plotType?: string //'Oma' | 'Vuokralla' | 'Valinnainen vuokratontti'
+  newBuilding?: boolean
+  buildYear?: number
+  loanFee?: number
+  maintananceFee?: number
+  waterFee?: number
+  otherFees?: number
+  bigRenovations: Renovation[]
+  renovationsDoneString?: string
+  renovationsComingString?: string
+  coordinates: Coordinates
+  imageLink: string
+  travelTimes: TravelTime[]
+  smallDistrict: string
+  bigDistrict: string
 }
 
 const updateApartments = async (_root: any, args: Args) => {
