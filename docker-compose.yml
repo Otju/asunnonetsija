@@ -13,7 +13,7 @@ services:
 
   backend:
     build: ./backend
-    command: npm start
+    command: npm dev
     ports:
       - 4000:4000
     volumes:
