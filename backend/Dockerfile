@@ -4,6 +4,6 @@ WORKDIR /usr/src/app
 
 COPY package* ./
 RUN npm install
-COPY src .
+COPY src ./src
 
 CMD npm start
