@@ -1,7 +1,12 @@
 import { ApolloError } from 'apollo-server'
 import { getClient } from '../../db'
+import { ApartmentInfo } from '../../../../types'
 
-const updateApartments = async (_root, args) => {
+interface Args {
+  apartments: ApartmentInfo[]
+}
+
+const updateApartments = async (_root: any, args: Args) => {
   const client = await getClient()
   try {
     const apartments = args.apartments.map(({ bigRenovations, ...otherFields }) => ({
@@ -36,6 +41,7 @@ const updateApartments = async (_root, args) => {
     ]
     const rowNameString = rowNames.map((rowName) => `"${rowName[0]}"`).join(', ')
     const rowParamsString = rowNames.map((rowName, i) => `$${i + 1}::${rowName[1]}[]`).join(', ')
+    // @ts-ignore
     const values = rowNames.map((rowName) => apartments.map((apartment) => apartment[rowName[0]]))
     const queryString = `INSERT INTO apartments (${rowNameString}) SELECT * FROM UNNEST (${rowParamsString})`
     await client.query('BEGIN')

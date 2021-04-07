@@ -2,7 +2,11 @@ import { query } from '../../db'
 import { getCoordinates, getTravelTimeFromCoordinates } from '../../utils/travelTimeCalculation'
 import { ApolloError } from 'apollo-server'
 
-const addDestination = async (_root, args) => {
+interface Args {
+  destination: string
+}
+
+const addDestination = async (_root: any, args: Args) => {
   const { destination } = args
   const { lat, lon } = await getCoordinates(destination)
   if (!lat || !lon) {
