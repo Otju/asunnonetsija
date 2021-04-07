@@ -22,7 +22,7 @@ CREATE TABLE "apartments"(
   "imageLink" TEXT NOT NULL,
   "smallDistrict" TEXT NOT NULL,
   "bigDistrict" TEXT NOT NULL,
-  "bigRenovations" JSON NOT NULL,
+  "bigRenovations" TEXT NOT NULL,
   "coordinates" JSON NOT NULL
 );
 

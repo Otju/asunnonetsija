@@ -2,12 +2,14 @@ import { Pool } from 'pg'
 
 const connectionString = process.env.DATABASE_URL
 
-const pool = new Pool({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-})
+const pool = connectionString
+  ? new Pool({
+      connectionString,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    })
+  : new Pool()
 
 export const query = async (text: string, params?: any) => {
   const start = Date.now()

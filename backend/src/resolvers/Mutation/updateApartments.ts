@@ -91,6 +91,49 @@ const updateApartments = async (_root: any, args: Args) => {
     const values = rowNames.map((rowName) => apartments.map((apartment) => apartment[rowName[0]]))
     const queryString = `INSERT INTO apartments (${rowNameString}) SELECT * FROM UNNEST (${rowParamsString})`
     await client.query('BEGIN')
+    await client.query(`
+    CREATE TABLE IF NOT EXISTS "apartments"(
+      "id" SERIAL PRIMARY KEY,
+      "link" TEXT NOT NULL,
+      "address" TEXT NOT NULL,
+      "district" TEXT NOT NULL,
+      "sqrMeters" NUMERIC NOT NULL,
+      "loanFreePrice" NUMERIC NOT NULL,
+      "sellingPrice" NUMERIC,
+      "pricePerSqrMeter" INT,
+      "rooms" TEXT,
+      "roomAmount" INT,
+      "condition" TEXT,
+      "houseType" TEXT,
+      "livingType" TEXT,
+      "plotType" TEXT,
+      "newBuilding" BOOLEAN,
+      "buildYear" INT,
+      "loanFee" NUMERIC,
+      "maintananceFee" NUMERIC,
+      "waterFee" NUMERIC,
+      "otherFees" NUMERIC,
+      "imageLink" TEXT NOT NULL,
+      "smallDistrict" TEXT NOT NULL,
+      "bigDistrict" TEXT NOT NULL,
+      "bigRenovations" TEXT NOT NULL,
+      "coordinates" JSON NOT NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS "travelTimes"(
+      "id" SERIAL PRIMARY KEY,
+      "address" TEXT NOT NULL,
+      "destination" TEXT NOT NULL,
+      "duration" INT NOT NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS "destinations"(
+      "destination" TEXT PRIMARY KEY,
+      "lon" NUMERIC NOT NULL,
+      "lat" NUMERIC NOT NULL
+    );
+    `)
+
     await client.query('TRUNCATE apartments')
     await client.query(queryString, values)
     await client.query('COMMIT')
