@@ -12,7 +12,7 @@ services:
       - ./types/:/usr/src/types
 
   backend:
-    build: ./backend
+    build: ./backend/Dockerfile.dev
     command: npm dev
     ports:
       - 4000:4000
