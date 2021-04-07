@@ -1,6 +1,8 @@
 import { Pool } from 'pg'
 
-const pool = new Pool()
+const connectionString = process.env.DATABASE_URL
+
+const pool = new Pool({ connectionString })
 
 export const query = async (text: string, params?: any) => {
   const start = Date.now()
