@@ -1,5 +1,10 @@
 import { readFromFile, writeToFile } from './fileEditor'
-import { ApartmentInfo, Coordinates, Renovation, District } from '../../types'
+import {
+  ApartmentInfo,
+  Coordinates,
+  Renovation,
+  District,
+} from '.././sharedTypes/typesFromRuntypes'
 import { PreInfo } from './getPreInfo'
 import inside from 'point-in-polygon'
 import progressBar from './progressBar'

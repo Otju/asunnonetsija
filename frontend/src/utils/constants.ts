@@ -1,4 +1,4 @@
-import { PossibleDestination, FilterField } from '../../../types'
+import { PossibleDestination, FilterField } from '../sharedTypes/types'
 
 export const possibleDestinations: PossibleDestination[] = [
   'Aalto Yliopisto',

@@ -1,4 +1,4 @@
-import { FilterField, ParsedApartmentInfo, SearchOptions } from '../../../types'
+import { FilterField, ParsedApartmentInfo, SearchOptions } from '../sharedTypes/types'
 import Slider from './Slider'
 import { findMinMax } from '../utils/findMinMax'
 

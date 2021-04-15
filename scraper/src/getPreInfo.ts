@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { Coordinates } from '../../types'
+import { Coordinates } from '.././sharedTypes/typesFromRuntypes'
 import { writeToFile } from './fileEditor'
 
 export interface PreInfo {

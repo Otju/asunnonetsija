@@ -1,15 +1,20 @@
 import { Boolean, Number, String, Record, Optional, Array } from 'runtypes'
 
-const Renovation = Record({
+export const Renovation = Record({
   type: String,
   cost: Number,
   timeTo: Number.withConstraint((number) => number <= 70),
   monthlyCost: Optional(Number),
 })
 
-const Coordinates = Record({
+export const Coordinates = Record({
   lat: Number,
   lon: Number,
+})
+
+export const TravelTime = Record({
+  destination: String,
+  duration: Number,
 })
 
 export const ApartmentInfo = Record({
@@ -37,4 +42,5 @@ export const ApartmentInfo = Record({
   imageLink: String,
   smallDistrict: String,
   bigDistrict: String,
+  travelTimes: Array(TravelTime),
 })

@@ -1,5 +1,5 @@
 import { useMapEvents, useMap, Polygon } from 'react-leaflet'
-import { District } from '../../../../types'
+import { District } from '../../sharedTypes/types'
 import { useEffect } from 'react'
 
 export const DistrictPolygons: React.FC<{

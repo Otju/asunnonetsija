@@ -6,18 +6,16 @@ import {
   SearchOptions,
   PossibleDestination,
   ApartmentInfoField,
-} from '../../types'
+} from './sharedTypes/types'
 import { getApartmentInfos } from './utils/apartmentParsers'
 import Tabs from './components/Tabs'
 import { possibleDestinations } from './utils/constants'
-import inside from 'point-in-polygon'
 import { useQuery } from 'urql'
 import allApartments from './graphql/queries/allApartments'
 
 const App = () => {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     filterSettings: [],
-    points: [],
   })
 
   const [result] = useQuery({
@@ -46,15 +44,6 @@ const App = () => {
         }
       }
     })
-    const points = searchOptions.points
-    if (points.length >= 3) {
-      const { lat, lon } = apartment.coordinates
-      const polygon = points.map(({ coordinates }) => [coordinates.lat, coordinates.lng])
-      const insideArea = inside([lat, lon], polygon)
-      if (!insideArea) {
-        keep = false
-      }
-    }
     return keep
   }
 

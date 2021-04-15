@@ -1,10 +1,6 @@
 import fetch from 'node-fetch'
 import { request, gql } from 'graphql-request'
-
-interface Coordinates {
-  lat: number
-  lon: number
-}
+import { Coordinates } from '../sharedTypes/typesFromRuntypes'
 
 export const getCoordinates = async (address: string): Promise<Coordinates> => {
   const response = await fetch(

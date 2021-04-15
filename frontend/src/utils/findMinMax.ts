@@ -1,4 +1,4 @@
-import { PossibleDestination, ParsedApartmentInfo, ApartmentInfoField } from '../../../types'
+import { PossibleDestination, ParsedApartmentInfo, ApartmentInfoField } from '../sharedTypes/types'
 import { possibleDestinations } from '../utils/constants'
 
 const NumberArrayMinMax = (numberArray: (number | undefined)[]) => {

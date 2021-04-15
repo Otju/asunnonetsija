@@ -1,6 +1,7 @@
 import { request, gql } from 'graphql-request'
 import fetch from 'node-fetch'
-import { TravelTime, Coordinates, Destination } from '../../types'
+import { TravelTime, Coordinates } from './sharedTypes/typesFromRuntypes'
+import { Destination } from './sharedTypes/types'
 
 export const getCoordinates = async (address: string): Promise<Coordinates> => {
   const response = await fetch(

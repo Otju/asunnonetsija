@@ -11,14 +11,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "allowJs": true
+    "allowJs": true,
+    "typeRoots": ["./src/typeRoots"]
   },
-  "include": ["src"],
-  "references": [{ "@types": "../../types" }]
+  "include": ["src"]
 }

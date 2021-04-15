@@ -4,7 +4,7 @@ import parseApartmentInfo from './parseApartmentInfo'
 import getAllTravelTimes from './getAllTravelTimes'
 import { request } from 'graphql-request'
 import { readFromFile } from './fileEditor'
-import { ApartmentInfo } from '../../types'
+import { ApartmentInfo } from './types/tstypes'
 import { ApartmentInfo as ApartmentInfoGuard } from './runtypes'
 
 const getPre = async () => {
@@ -58,7 +58,12 @@ const writeToDB = async () => {
     apartments,
   }
   try {
-    const response = await request('http://localhost:4000/', query, variables)
+    const writeToProd = process.argv[3]
+    const response = await request(
+      writeToProd ? 'https://asunnonetsija-backend.herokuapp.com/' : 'http://localhost:4000/',
+      query,
+      variables
+    )
     console.log(response)
     console.log('Wrote info to DB')
   } catch (e) {

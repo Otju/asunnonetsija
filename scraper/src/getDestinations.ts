@@ -1,5 +1,5 @@
 import { getCoordinates } from './getTravelTimes'
-import { Destination } from '../../types'
+import { Destination } from '.././sharedTypes/typesFromRuntypes'
 
 const getDestinations = async () => {
   const destinations = ['Aalto Yliopisto', 'Helsingin rautatieasema']

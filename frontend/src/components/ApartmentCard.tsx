@@ -1,4 +1,4 @@
-import { ParsedApartmentInfo } from '../../../types'
+import { ParsedApartmentInfo } from '../sharedTypes/types'
 import { getInfoBoxes } from '../utils/apartmentParsers'
 import InfoBoxGrop from './InfoBoxGroup'
 

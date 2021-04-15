@@ -1,5 +1,5 @@
 import { calculateMonthlyFee } from './loanCalculator'
-import { Renovation } from '../../../types'
+import { Renovation, ApartmentInfo } from '../sharedTypes/typesFromRuntypes'
 import {
   IoHomeOutline,
   IoPricetagOutline,
@@ -10,7 +10,7 @@ import {
   IoHourglassOutline,
   IoBusOutline,
 } from 'react-icons/io5'
-import { ParsedApartmentInfo, LoanSettings, ApartmentInfo } from '../../../types'
+import { ParsedApartmentInfo, LoanSettings } from '../sharedTypes/types'
 import formatCurrency from './currencyFormatter'
 import calculateHousingBenefit from './housingBenefitCalculator'
 import { ReactNode } from 'react'

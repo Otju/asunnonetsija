@@ -1,5 +1,5 @@
 import Slider from './Slider'
-import { LoanSettings as LoanSettingsType } from '../../../types'
+import { LoanSettings as LoanSettingsType } from '../sharedTypes/types'
 
 const LoanSettings: React.FC<{
   loanVariables: LoanSettingsType | undefined

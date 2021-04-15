@@ -17,7 +17,8 @@
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
     "node-fetch": "^2.6.1",
-    "pg": "^8.5.1"
+    "pg": "^8.5.1",
+    "runtypes": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.37",

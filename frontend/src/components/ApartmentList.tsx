@@ -1,6 +1,6 @@
 import ApartmentCard from './ApartmentCard'
 
-import { ParsedApartmentInfo } from '../../../types'
+import { ParsedApartmentInfo } from '../sharedTypes/types'
 
 const ApartmentList: React.FC<{ apartmentInfos: ParsedApartmentInfo[] }> = ({ apartmentInfos }) => {
   return (

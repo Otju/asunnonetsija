@@ -1,6 +1,6 @@
 import getTravelTimes from './getTravelTimes'
 import getDestinations from './getDestinations'
-import { ApartmentInfo } from '../../types'
+import { ApartmentInfo } from './sharedTypes/typesFromRuntypes'
 import { readFromFile, writeToFile } from './fileEditor'
 import progressBar from './progressBar'
 

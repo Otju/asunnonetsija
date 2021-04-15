@@ -4,7 +4,7 @@ import {
   LoanSettings as LoanSettingsType,
   ParsedApartmentInfo,
   SearchOptions,
-} from '../../../types'
+} from '../sharedTypes/types'
 import { generalFilterFields, travelFilterFields } from '../utils/constants'
 import FilterSettings from './FilterSettings'
 import MapPage from './MapPage'
@@ -19,8 +19,6 @@ const Tabs: React.FC<{
   const setLoanVariables = (loanSettings: LoanSettingsType) => {
     setSearchOptions({ ...searchOptions, loanSettings })
   }
-
-  const points = searchOptions.points
 
   const districts = smallDistricts.filter(({ name }) =>
     apartmentInfos.find(({ smallDistrict }) => {
@@ -63,7 +61,6 @@ const Tabs: React.FC<{
         <MapPage
           houseCoordinates={apartmentInfos.map((info) => info.coordinates).filter((item) => item)}
           districts={districts}
-          points={points}
         />
       )
       break
