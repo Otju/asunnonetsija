@@ -24,13 +24,14 @@ export const readFromFile = (fileName: string, fileType: FileType) => {
 
 export const writeToFile = (
   fileName: string,
-  value: Array<string | Object>,
+  value: Array<string | Object> | Object,
   fileType: FileType,
   writeToAssets?: boolean
 ) => {
   let newValue: string
   switch (fileType) {
     case 'CSV':
+      //@ts-ignore
       newValue = value.join(',')
       break
     case 'JSON':

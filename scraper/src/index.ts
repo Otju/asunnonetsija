@@ -1,11 +1,11 @@
 import getPreInfo from './getPreInfo'
 import getRawApartmentInfo from './getRawApartmentInfo'
 import parseApartmentInfo from './parseApartmentInfo'
-import getAllTravelTimes from './getAllTravelTimes'
 import { request } from 'graphql-request'
 import { readFromFile } from './fileEditor'
-import { ApartmentInfo } from './types/tstypes'
-import { ApartmentInfo as ApartmentInfoGuard } from './runtypes'
+import { RawApartmentInfo } from './sharedTypes/types'
+import { ApartmentInfo as ApartmentInfoGuard } from './sharedTypes/runtypes'
+import getPointsOfIntrest from './getPointsOfIntrest'
 
 const getPre = async () => {
   console.log('Getting pre-info')
@@ -25,29 +25,19 @@ const parse = async () => {
   console.log('Parsed')
 }
 
-const getTravelTimes = async () => {
-  console.log('Getting travel times')
-  await getAllTravelTimes()
-  console.log('Got travel times')
-}
-
 const writeToDB = async () => {
-  const parsedApartments: ApartmentInfo[] = readFromFile('apartmentInfos.json', 'JSON')
+  const parsedApartments: RawApartmentInfo[] = readFromFile(
+    'apartmentInfoWithPointsOfInterst.json',
+    'JSON'
+  )
+  console.log(parsedApartments[0])
   const apartments = parsedApartments
-    .map(
-      ({
-        renovationsComingString,
-        renovationsDoneString,
-        bigRenovations,
-        travelTimes,
-        ...otherFields
-      }) => {
-        bigRenovations = bigRenovations.length
-          ? bigRenovations
-          : [{ type: 'Putkiremontti', cost: 5000, timeTo: 10 }]
-        return { bigRenovations, ...otherFields }
-      }
-    )
+    .map(({ renovationsComingString, renovationsDoneString, bigRenovations, ...otherFields }) => {
+      bigRenovations = bigRenovations.length
+        ? bigRenovations
+        : [{ type: 'Putkiremontti', cost: 5000, timeTo: 10 }]
+      return { bigRenovations, ...otherFields }
+    })
     .filter((apartment) => ApartmentInfoGuard.guard(apartment))
   console.log('Aparmentcount', apartments.length)
   const query = `
@@ -87,9 +77,9 @@ const main = async () => {
       console.log('Only parse')
       await parse()
       break
-    case 'travel':
-      console.log('Only travel times')
-      await getTravelTimes()
+    case 'points':
+      console.log('Only pointsOfIntrest')
+      await getPointsOfIntrest()
       break
     case 'db':
       console.log('Only write to db')
@@ -100,7 +90,6 @@ const main = async () => {
       await getPre()
       await getRaw()
       await parse()
-      //await getTravelTimes()
       break
   }
 }

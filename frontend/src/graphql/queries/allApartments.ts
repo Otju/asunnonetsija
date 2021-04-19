@@ -23,9 +23,13 @@ const allApartments = `
       imageLink
       smallDistrict
       bigDistrict
-      travelTimes {
-        duration
-        destination
+      pointsOfIntrest {
+        name
+        coordinates{
+          lat
+          lon
+        }
+        directDistance
       }
       bigRenovations {
         type

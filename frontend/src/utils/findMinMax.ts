@@ -18,7 +18,7 @@ export const findMinMax = (
 ) => {
   const numberArray = apartmentInfos.map((info) => {
     return possibleDestinations.includes(name as PossibleDestination)
-      ? info.travelTimes.find((item) => item.destination === name)?.duration
+      ? info.pointsOfIntrest.find((item) => item.name === name)?.directDistance
       : info[name as ApartmentInfoField]
   })
   return NumberArrayMinMax(numberArray)

@@ -34,6 +34,12 @@ lat: Float!
 lon: Float!
 `
 
+const pointOfIntrestFields = `
+type: String!
+name: String!
+directDistance: Float!
+`
+
 const types = `
 type Renovation{
   ${renovationFields}
@@ -41,6 +47,11 @@ type Renovation{
 
 type Coordinates{
   ${coordinateFields}
+}
+
+type PointOfIntrest{
+  ${pointOfIntrestFields}
+  coordinates:Coordinates!
 }
 
 input RenovationInput{
@@ -51,23 +62,26 @@ input CoordinatesInput{
   ${coordinateFields}
 }
 
+input PointOfIntrestInput{
+  ${pointOfIntrestFields}
+  coordinates:CoordinatesInput!
+}
+
+
 type Apartment {
   ${apartmentFields}
-  travelTimes: [TravelTime!]!
+  pointsOfIntrest: [PointOfIntrest!]!
   coordinates: Coordinates!
   bigRenovations: [Renovation!]!
 }
 
 input ApartmentInput {
   ${apartmentFields}
+  pointsOfIntrest: [PointOfIntrestInput!]!
   coordinates: CoordinatesInput!
   bigRenovations: [RenovationInput!]!
 }
 
-type TravelTime {
-  destination: String!
-  duration: Int!
-}
 `
 
 export default types

@@ -9,6 +9,8 @@ import { Coordinates } from './../../sharedTypes/typesFromRuntypes'
 import { useState } from 'react'
 import { DistrictPolygons, Detector } from './components'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
+import schoolDistricts from '../../assets/schoolDistricts.json'
+import { DistrictType } from './../../sharedTypes/types'
 
 interface BoundsCoordinates {
   lat: number
@@ -28,9 +30,11 @@ const MapPage: React.FC<{
   houseCoordinates: Coordinates[]
   districts: District[]
 }> = ({ houseCoordinates, districts }) => {
+  const districtTypes: DistrictType[] = ['ruotsiAla', 'ruotsiYla', 'suomiAla', 'suomiYla']
   const defaultZoom = 10
   const [bounds, setBounds] = useState<Bounds>()
   const [zoom, setZoom] = useState(defaultZoom)
+  const [districtTypeIndex, setDistrictTypeIndex] = useState<number>(0)
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
 
   const handleDistrictSelect = (name: string, selected: boolean) => {
@@ -39,6 +43,16 @@ const MapPage: React.FC<{
       : [...selectedDistricts, name]
     setSelectedDistricts(newDistricts)
   }
+
+  const handeDistrictTypeChange = () => {
+    if (districtTypeIndex === 3) {
+      setDistrictTypeIndex(0)
+    } else {
+      setDistrictTypeIndex(districtTypeIndex + 1)
+    }
+  }
+
+  const currentDistrictType = districtTypes[districtTypeIndex]
 
   houseCoordinates = houseCoordinates.sort()
 
@@ -73,21 +87,26 @@ const MapPage: React.FC<{
     <Marker position={[lat, lon]} icon={iconHouse} key={i} />
   ))
   console.log(zoom)
+  console.log(districts)
+
+  console.log(<MarkerClusterGroup>{markers}</MarkerClusterGroup>)
 
   return (
-    <MapContainer center={[60.232, 24.91]} zoom={defaultZoom}>
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <MarkerClusterGroup>{markers}</MarkerClusterGroup>
-      <DistrictPolygons
-        districts={districts}
-        handleDistrictSelect={handleDistrictSelect}
-        selectedDistricts={selectedDistricts}
-      />
-      <Detector setBounds={setBounds} setZoom={setZoom} handleClick={() => {}} />
-    </MapContainer>
+    <>
+      <button onClick={handeDistrictTypeChange}>{currentDistrictType}</button>
+      <MapContainer center={[60.232, 24.91]} zoom={defaultZoom}>
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <DistrictPolygons
+          districts={schoolDistricts[currentDistrictType]}
+          handleDistrictSelect={handleDistrictSelect}
+          selectedDistricts={selectedDistricts}
+        />
+        <Detector setBounds={setBounds} setZoom={setZoom} handleClick={() => {}} />
+      </MapContainer>
+    </>
   )
 }
 

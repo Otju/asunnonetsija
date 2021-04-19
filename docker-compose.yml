@@ -29,7 +29,6 @@ services:
       - 5432:5432
     volumes:
       - ./database/data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d/
 
   # routefinder:
   #   image: hsldevcom/opentripplanner:prod

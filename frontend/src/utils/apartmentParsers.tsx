@@ -73,7 +73,7 @@ interface infoBox {
 
 export const getInfoBoxes = (
   info: ParsedApartmentInfo,
-  type?: 'fees' | 'travelTimes'
+  type?: 'fees' | 'pointsOfIntrest'
 ): infoBox[] => {
   switch (type) {
     case 'fees':
@@ -103,10 +103,10 @@ export const getInfoBoxes = (
           info: `${formatCurrency(info.totalFees - info.housingBenefit)}/kk`,
         },
       ]
-    case 'travelTimes':
-      return info.travelTimes.map(({ destination, duration }) => ({
-        header: destination,
-        info: `${duration} min`,
+    case 'pointsOfIntrest':
+      return info?.pointsOfIntrest?.map(({ name, directDistance }) => ({
+        header: name,
+        info: `${directDistance / 1000} km`,
         Icon: IoBusOutline,
       }))
     default:

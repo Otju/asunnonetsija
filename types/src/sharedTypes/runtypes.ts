@@ -1,4 +1,4 @@
-import { Boolean, Number, String, Record, Optional, Array } from 'runtypes'
+import { Boolean, Number, String, Record, Optional, Array, Union, Literal } from 'runtypes'
 
 export const Renovation = Record({
   type: String,
@@ -13,8 +13,35 @@ export const Coordinates = Record({
 })
 
 export const TravelTime = Record({
-  destination: String,
+  type: Union(Literal('walk'), Literal('bus'), Literal('car')),
   duration: Number,
+  isEstimate: Boolean,
+})
+
+export const PointOfIntrestType = Union(
+  Literal('store'),
+  Literal('centre'),
+  Literal('alko'),
+  Literal('bigStore'),
+  Literal('university'),
+  Literal('ala-aste'),
+  Literal('ylaAste'),
+  Literal('lukio'),
+  Literal('daycare')
+)
+
+export const RawPointOfIntrest = Record({
+  type: PointOfIntrestType,
+  name: String,
+  coordinates: Coordinates,
+})
+
+export const PointOfIntrest = Record({
+  type: PointOfIntrestType,
+  name: String,
+  coordinates: Coordinates,
+  directDistance: Number,
+  travelTimes: Optional(Array(TravelTime)),
 })
 
 export const ApartmentInfo = Record({
@@ -42,5 +69,5 @@ export const ApartmentInfo = Record({
   imageLink: String,
   smallDistrict: String,
   bigDistrict: String,
-  travelTimes: Array(TravelTime),
+  pointsOfIntrest: Array(PointOfIntrest),
 })

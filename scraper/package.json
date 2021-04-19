@@ -16,6 +16,7 @@
     "@types/node": "^14.14.22",
     "@types/node-fetch": "^2.5.8",
     "@types/point-in-polygon": "^1.0.0",
+    "@types/proj4": "^2.5.0",
     "@types/puppeteer": "^5.4.2"
   },
   "dependencies": {
@@ -25,9 +26,14 @@
     "got": "^11.8.1",
     "graphql": "^15.4.0",
     "graphql-request": "^3.4.0",
+    "haversine-distance": "^1.2.1",
+    "hull.js": "^1.0.1",
     "node-fetch": "^2.6.1",
+    "parse-kml": "^1.0.1",
     "point-in-polygon": "^1.0.1",
+    "proj4": "^2.7.2",
     "puppeteer": "^5.5.0",
-    "runtypes": "^6.0.0"
+    "runtypes": "^6.0.0",
+    "xml2js": "^0.4.23"
   }
 }

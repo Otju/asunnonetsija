@@ -5,7 +5,7 @@ import InfoBoxGrop from './InfoBoxGroup'
 const ApartmentCard: React.FC<{ info: ParsedApartmentInfo }> = ({ info }) => {
   const generalInfoBoxes = getInfoBoxes(info)
   const feeInfoBoxes = getInfoBoxes(info, 'fees')
-  const travelDurationInfoBoxes = getInfoBoxes(info, 'travelTimes')
+  const travelDurationInfoBoxes = getInfoBoxes(info, 'pointsOfIntrest')
   return (
     <div className="apartmentCard bordered">
       <div className="horizontalInfo">

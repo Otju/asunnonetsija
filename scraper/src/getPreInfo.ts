@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { Coordinates } from '.././sharedTypes/typesFromRuntypes'
+import { Coordinates } from './sharedTypes/typesFromRuntypes'
 import { writeToFile } from './fileEditor'
 
 export interface PreInfo {
@@ -12,9 +12,9 @@ const getPreInfo = async () => {
   const link = (offset: number) =>
     `https://asunnot.oikotie.fi/api/cards?cardType=100&habitationType%5B%5D=1&limit=5000&locations=%5B%5B64,6,%22Helsinki%22%5D,%5B39,6,%22Espoo%22%5D,%22Kauniainen%22,%22Vantaa%22%5D&offset=${offset}&onlineOffer=0&sortBy=published_sort_desc`
   const headers = {
-    'ota-loaded': '1613066866',
-    'ota-token': '132821c8501fc9cba85fab32b2b7bb25dd900a2e8fdd092200fa5d40ad454a67',
-    'ota-cuid': '0f004345a74f04448860aafce2061458bd496a83',
+    'ota-loaded': '1618765401',
+    'ota-token': '993e102a262e0fbd3f69c49cf5a93aa45a4e8030cf30c937b82bf3ae1d84bb21',
+    'ota-cuid': '82e693ce0670dd366ddbdf6534be2c97f4ff0b60',
   }
   const getCards = async (offset: number) => {
     const response = await fetch(link(offset), { headers })

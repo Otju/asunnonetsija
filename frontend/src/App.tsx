@@ -33,7 +33,7 @@ const App = () => {
     let keep = true
     searchOptions.filterSettings.forEach(({ name, min, max }) => {
       const value = possibleDestinations.includes(name as PossibleDestination)
-        ? apartment.travelTimes.find(({ destination }) => destination === name)?.duration
+        ? apartment.pointsOfIntrest.find((item) => item.name === name)?.directDistance
         : apartment[name as ApartmentInfoField]
       if (value) {
         if (max && value > max) {

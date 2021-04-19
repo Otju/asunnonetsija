@@ -9,10 +9,13 @@ interface Args {
 const updateApartments = async (_root: any, args: Args) => {
   const client = await getClient()
   try {
-    const apartments = args.apartments.map(({ bigRenovations, ...otherFields }) => ({
-      ...otherFields,
-      bigRenovations: JSON.stringify(bigRenovations),
-    }))
+    const apartments = args.apartments.map(
+      ({ bigRenovations, pointsOfIntrest, ...otherFields }) => ({
+        ...otherFields,
+        bigRenovations: JSON.stringify(bigRenovations),
+        pointsOfIntrest: JSON.stringify(pointsOfIntrest),
+      })
+    )
     console.log(apartments[1])
     const rowNames = [
       ['link', 'text'],
@@ -37,6 +40,7 @@ const updateApartments = async (_root: any, args: Args) => {
       ['smallDistrict', 'text'],
       ['bigDistrict', 'text'],
       ['bigRenovations', 'text'],
+      ['pointsOfIntrest', 'text'],
       ['coordinates', 'json'],
     ]
     const rowNameString = rowNames.map((rowName) => `"${rowName[0]}"`).join(', ')
@@ -71,20 +75,8 @@ const updateApartments = async (_root: any, args: Args) => {
       "smallDistrict" TEXT NOT NULL,
       "bigDistrict" TEXT NOT NULL,
       "bigRenovations" TEXT NOT NULL,
+      "pointsOfIntrest" TEXT NOT NULL,
       "coordinates" JSON NOT NULL
-    );
-    
-    CREATE TABLE IF NOT EXISTS "travelTimes"(
-      "id" SERIAL PRIMARY KEY,
-      "address" TEXT NOT NULL,
-      "destination" TEXT NOT NULL,
-      "duration" INT NOT NULL
-    );
-    
-    CREATE TABLE IF NOT EXISTS "destinations"(
-      "destination" TEXT PRIMARY KEY,
-      "lon" NUMERIC NOT NULL,
-      "lat" NUMERIC NOT NULL
     );
     `)
 

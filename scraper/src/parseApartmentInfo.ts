@@ -1,13 +1,9 @@
 import { readFromFile, writeToFile } from './fileEditor'
-import {
-  ApartmentInfo,
-  Coordinates,
-  Renovation,
-  District,
-} from '.././sharedTypes/typesFromRuntypes'
+import { ApartmentInfo, Coordinates, Renovation } from './sharedTypes/typesFromRuntypes'
 import { PreInfo } from './getPreInfo'
 import inside from 'point-in-polygon'
 import progressBar from './progressBar'
+import { RawApartmentInfo, District } from './sharedTypes/types'
 
 const getRawApartmentInfo = () => {
   return readFromFile('rawApartmentInfos.json', 'JSON')
@@ -125,7 +121,7 @@ const parseRenovations = ({
   renovationsComingString,
   renovationsDoneString,
   buildYear,
-}: ApartmentInfo): Renovation[] => {
+}: RawApartmentInfo): Renovation[] => {
   const renovations: Renovation[] = []
   const renovationTypes = [
     {
@@ -223,7 +219,6 @@ const parseAllInfoTableRows = async (
     ...districts,
   }
   apartmentInfo.bigRenovations = parseRenovations(apartmentInfo)
-  apartmentInfo.travelTimes = []
   delete apartmentInfo.renovationsDoneString
   return apartmentInfo
 }
