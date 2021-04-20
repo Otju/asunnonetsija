@@ -6,6 +6,8 @@ import { readFromFile } from './fileEditor'
 import { RawApartmentInfo } from './sharedTypes/types'
 import { ApartmentInfo as ApartmentInfoGuard } from './sharedTypes/runtypes'
 import getPointsOfIntrest from './getPointsOfIntrest'
+import getRawPointsOfIntrest from './getRawPointsOfIntrest'
+import getSchoolsAndDistricts from './getSchools'
 
 const getPre = async () => {
   console.log('Getting pre-info')
@@ -61,6 +63,8 @@ const writeToDB = async () => {
   }
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const scriptToRun = process.argv[2]
 
 const main = async () => {
@@ -78,8 +82,13 @@ const main = async () => {
       await parse()
       break
     case 'points':
-      console.log('Only pointsOfIntrest')
+      console.log('Only pointsOfIntrest (and db)')
+      await getRawPointsOfIntrest()
+      await getSchoolsAndDistricts()
+      await delay(5000)
       await getPointsOfIntrest()
+      await delay(5000)
+      await writeToDB()
       break
     case 'db':
       console.log('Only write to db')

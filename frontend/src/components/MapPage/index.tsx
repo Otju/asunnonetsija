@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { DistrictPolygons, Detector } from './components'
 import MarkerClusterGroup from 'react-leaflet-markercluster'
 import schoolDistricts from '../../assets/schoolDistricts.json'
-import { DistrictType } from './../../sharedTypes/types'
+import { SchoolDistrictType } from './../../sharedTypes/typesFromRuntypes'
 
 interface BoundsCoordinates {
   lat: number
@@ -30,7 +30,7 @@ const MapPage: React.FC<{
   houseCoordinates: Coordinates[]
   districts: District[]
 }> = ({ houseCoordinates, districts }) => {
-  const districtTypes: DistrictType[] = ['ruotsiAla', 'ruotsiYla', 'suomiAla', 'suomiYla']
+  const districtTypes: SchoolDistrictType[] = ['ruotsiAla', 'ruotsiYla', 'suomiAla', 'suomiYla']
   const defaultZoom = 10
   const [bounds, setBounds] = useState<Bounds>()
   const [zoom, setZoom] = useState(defaultZoom)
@@ -100,7 +100,10 @@ const MapPage: React.FC<{
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <DistrictPolygons
-          districts={schoolDistricts[currentDistrictType]}
+          districts={schoolDistricts[currentDistrictType].map((item) => ({
+            ...item,
+            coordinates: item.coordinates.map((cor) => [cor.lon, cor.lat]),
+          }))}
           handleDistrictSelect={handleDistrictSelect}
           selectedDistricts={selectedDistricts}
         />

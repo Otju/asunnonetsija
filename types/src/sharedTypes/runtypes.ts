@@ -18,16 +18,24 @@ export const TravelTime = Record({
   isEstimate: Boolean,
 })
 
+export const SchoolDistrictType = Union(
+  Literal('ruotsiAla'),
+  Literal('ruotsiYla'),
+  Literal('suomiAla'),
+  Literal('suomiYla')
+)
+
 export const PointOfIntrestType = Union(
-  Literal('store'),
-  Literal('centre'),
-  Literal('alko'),
-  Literal('bigStore'),
-  Literal('university'),
-  Literal('ala-aste'),
-  Literal('ylaAste'),
-  Literal('lukio'),
-  Literal('daycare')
+  Union(
+    Literal('store'),
+    Literal('centre'),
+    Literal('alko'),
+    Literal('bigStore'),
+    Literal('university'),
+    Literal('lukio'),
+    Literal('daycare')
+  ),
+  SchoolDistrictType
 )
 
 export const RawPointOfIntrest = Record({
@@ -70,4 +78,17 @@ export const ApartmentInfo = Record({
   smallDistrict: String,
   bigDistrict: String,
   pointsOfIntrest: Array(PointOfIntrest),
+})
+
+export const SchoolDistrict = Record({
+  type: SchoolDistrictType,
+  name: String,
+  coordinates: Array(Coordinates),
+  city: Union(Literal('Espoo'), Literal('Vantaa'), Literal('Helsinki'), Literal('Kauniainen')),
+})
+
+export const School = Record({
+  type: Union(SchoolDistrictType, Literal('lukio')),
+  name: String,
+  coordinates: Coordinates,
 })

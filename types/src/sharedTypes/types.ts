@@ -16,8 +16,6 @@ export interface ParsedApartmentInfo extends ApartmentInfo {
   housingBenefit: number
 }
 
-export type DistrictType = 'ruotsiAla' | 'ruotsiYla' | 'suomiAla' | 'suomiYla'
-
 export interface RawApartmentInfo extends ApartmentInfo {
   renovationsComingString: string
   renovationsDoneString: string

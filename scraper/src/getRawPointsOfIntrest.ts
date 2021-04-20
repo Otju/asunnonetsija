@@ -72,7 +72,7 @@ const removeDuplicates = (names: DestinationObject[]) => {
   return filteredNames
 }
 
-const doStuff = async () => {
+const getRawPointsOfIntrest = async () => {
   const stores = await searchAllOfType('store', [
     'K-market',
     'K-Supermarket',
@@ -83,14 +83,16 @@ const doStuff = async () => {
     'Prisma',
   ])
   const bigStores = stores
-    .filter(
-      ({ name }) =>
-        name.includes('K-Supermarket') ||
-        name.includes('K-Citymarket') ||
-        name.includes('S-market') ||
-        name.includes('Prisma') ||
-        name.includes('Lidl')
-    )
+    .filter(({ name }) => {
+      const lwCase = name.toLowerCase()
+      return (
+        lwCase.includes('k-supermarket') ||
+        lwCase.includes('k-citymarket') ||
+        lwCase.includes('s-market') ||
+        lwCase.includes('prisma') ||
+        lwCase.includes('lidl')
+      )
+    })
     .map((item) => ({ ...item, type: 'bigStore' }))
   const alkos = await searchAllOfType('alko', ['Alko'])
   const universities = await searchAllOfType('university', ['Yliopisto'])
@@ -118,4 +120,4 @@ const searchAllOfType = async (
   return items
 }
 
-doStuff()
+export default getRawPointsOfIntrest

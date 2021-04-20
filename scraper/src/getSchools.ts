@@ -3,10 +3,20 @@ import { isInBoundaries } from './getBoundaries'
 import proj4 from 'proj4'
 const parseString = require('xml2js').parseString
 const parseKML = require('parse-kml')
-import { writeToFile } from './fileEditor'
-import isInPolygon from 'point-in-polygon'
+import { readFromFile, writeToFile } from './fileEditor'
+import {
+  isInPolygon,
+  latLonArrayToNumberArrayArray,
+  NumberArrayArrayToCoordinates,
+} from './coordinateCalc'
 import extraDistricts from './data/extraDistricts.json'
-import { DistrictType } from './sharedTypes/types'
+import {
+  Coordinates,
+  SchoolDistrict,
+  SchoolDistrictType,
+  School,
+} from './sharedTypes/typesFromRuntypes'
+import schoolsWithTypes from './data/schoolsWithTypes.json'
 const hull = require('hull.js')
 
 proj4.defs('EPSG:3067', '+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
@@ -15,19 +25,12 @@ proj4.defs(
   '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
 )
 
-interface SchoolDistrict {
-  type: DistrictType
-  name: string
-  coordinates: number[][]
-  city: 'Espoo' | 'Vantaa' | 'Helsinki' | 'Kauniainen'
-}
-
 const formatCoordinates = (coordinates: number[], toFormat: 3067 | 3879) => {
   const outputCoordinates = proj4(`EPSG:${toFormat}`, 'EPSG:4326').forward(coordinates)
-  return outputCoordinates
+  return { lon: outputCoordinates[0], lat: outputCoordinates[1] }
 }
 
-const types: DistrictType[] = ['ruotsiAla', 'ruotsiYla', 'suomiAla', 'suomiYla']
+const types: SchoolDistrictType[] = ['ruotsiAla', 'ruotsiYla', 'suomiAla', 'suomiYla']
 
 const getHelsinkiSchoolDistricts = async () => {
   const allSchools = []
@@ -50,10 +53,13 @@ const getHelsinkiSchoolDistricts = async () => {
     },
   ]
   for (const { type, searchType } of helTypes) {
+    /*
     const res = await fetch(
       `https://kartta.hel.fi/ws/geoserver/avoindata/wfs?version=1.1.0&request=GetFeature&typeName=${searchType}&outputformat=json`
     )
     const data = await res.json()
+        */
+    const data = readFromFile(`/helSchools/${searchType}.json`, 'JSON')
     const schools = data.features
     //@ts-ignore
     const parsed = schools.map((school) => {
@@ -122,7 +128,7 @@ const getVantaaSchoolDistricts = async () => {
   schools.map((school) => {
     const rawCoordinates = school.geometry.coordinates
     const name = school.properties.koulu || school.properties.Oppilaaksiottoalue
-    const coordinates = rawCoordinates[0].map(([lat, lon]: number[]) => [lat, lon])
+    const coordinates = rawCoordinates[0].map(([lon, lat]: number[]) => ({ lat, lon }))
     if (name.includes('oppilaaksiotto')) {
       parsed.push({ coordinates, name, type: 'suomiAla', city: 'Vantaa' })
       parsed.push({ coordinates, name, type: 'suomiYla', city: 'Vantaa' })
@@ -130,7 +136,7 @@ const getVantaaSchoolDistricts = async () => {
       parsed.push({ coordinates, name, type: 'ruotsiAla', city: 'Vantaa' })
     }
   })
-  const vantaaBorders: number[][] = []
+  const vantaaBorders: Coordinates[] = []
   parsed
     .filter(({ type }) => type === 'ruotsiAla')
     .forEach(({ coordinates }) => {
@@ -141,7 +147,9 @@ const getVantaaSchoolDistricts = async () => {
       })
     })
   parsed.push({
-    coordinates: hull(vantaaBorders, 0.05),
+    coordinates: NumberArrayArrayToCoordinates(
+      hull(latLonArrayToNumberArrayArray(vantaaBorders), 0.05)
+    ),
     name: 'Koko Vantaa',
     type: 'ruotsiYla',
     city: 'Vantaa',
@@ -158,10 +166,28 @@ const getAllSchoolDistricts = async () => {
   return schoolDistricts
 }
 
-interface School {
+interface inputThing {
+  coordinates: Coordinates
   name: string
-  coordinates: number[]
-  type: number
+}
+
+const addToRightSchoolType = (
+  parsed: School[],
+  { coordinates, name }: inputThing,
+  lang: 'suomi' | 'ruotsi'
+) => {
+  if (name.includes('ala-')) {
+    //@ts-ignore
+    parsed.push({ coordinates, name, type: `${lang}Ala` })
+  } else if (name.includes('yläast')) {
+    //@ts-ignore
+    parsed.push({ coordinates, name, type: `${lang}Yla` })
+  } else {
+    //@ts-ignore
+    parsed.push({ coordinates, name, type: `${lang}Ala` })
+    //@ts-ignore
+    parsed.push({ coordinates, name, type: `${lang}Yla` })
+  }
 }
 
 const getAllSchools = async () => {
@@ -174,17 +200,30 @@ const getAllSchools = async () => {
   //@ts-ignore
   schools.forEach((school) => {
     const rawCoordinates = school.geometry.coordinates
-    const type = school.properties.oltyp
-    const name = school.properties.onimi
     const coordinates = formatCoordinates(rawCoordinates, 3067)
-    if (isInBoundaries({ lat: coordinates[0], lon: coordinates[1] })) {
-      parsed.push({ coordinates, name, type })
+    if (isInBoundaries(coordinates)) {
+      const typeNumber = Number(school.properties.oltyp)
+      const id = school.properties.tunn
+      const languageNumber = Number(schoolsWithTypes.find((item) => item.Tunnus === id)?.Kieli) || 1
+      const name = school.properties.onimi
+      if (typeNumber === 12) {
+        return
+      } else if (typeNumber === 15) {
+        parsed.push({ coordinates, name, type: 'lukio' })
+      } else if (languageNumber === 1) {
+        addToRightSchoolType(parsed, { coordinates, name }, 'suomi')
+      } else if (languageNumber === 2) {
+        addToRightSchoolType(parsed, { coordinates, name }, 'ruotsi')
+      } else if (languageNumber === 3) {
+        addToRightSchoolType(parsed, { coordinates, name }, 'suomi')
+        addToRightSchoolType(parsed, { coordinates, name }, 'ruotsi')
+      }
     }
   })
   return parsed
 }
 
-const getDistrictsOfType = (schoolDistricts: SchoolDistrict[], filterType: DistrictType) => {
+const getDistrictsOfType = (schoolDistricts: SchoolDistrict[], filterType: SchoolDistrictType) => {
   return schoolDistricts
     .filter(({ type }) => type === filterType)
     .map(({ coordinates, name, city }) => ({
@@ -194,7 +233,7 @@ const getDistrictsOfType = (schoolDistricts: SchoolDistrict[], filterType: Distr
     }))
 }
 
-const doStuff = async () => {
+const getSchoolsAndDistricts = async () => {
   let schools = await getAllSchools()
   const schoolDistricts = await getAllSchoolDistricts()
   const groupedSchoolDistricts = Object.fromEntries(
@@ -211,8 +250,8 @@ const doStuff = async () => {
       ])
     ),
   }))
-  writeToFile('schools.json', schools, 'JSON', true)
+  writeToFile('schools.json', schools, 'JSON')
   writeToFile('schoolDistricts.json', groupedSchoolDistricts, 'JSON', true)
 }
 
-doStuff()
+export default getSchoolsAndDistricts
