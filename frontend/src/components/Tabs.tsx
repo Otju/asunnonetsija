@@ -8,7 +8,6 @@ import {
 import { generalFilterFields, travelFilterFields } from '../utils/constants'
 import FilterSettings from './FilterSettings'
 import MapPage from './MapPage'
-import smallDistricts from '../assets/smallDistricts.json'
 const Tabs: React.FC<{
   apartmentInfos: ParsedApartmentInfo[]
   setSearchOptions: Function
@@ -19,12 +18,6 @@ const Tabs: React.FC<{
   const setLoanVariables = (loanSettings: LoanSettingsType) => {
     setSearchOptions({ ...searchOptions, loanSettings })
   }
-
-  const districts = smallDistricts.filter(({ name }) =>
-    apartmentInfos.find(({ smallDistrict }) => {
-      return smallDistrict === name
-    })
-  )
 
   let tabToShow
   switch (tab) {
@@ -57,12 +50,7 @@ const Tabs: React.FC<{
       )
       break
     case 3:
-      tabToShow = (
-        <MapPage
-          houseCoordinates={apartmentInfos.map((info) => info.coordinates).filter((item) => item)}
-          districts={districts}
-        />
-      )
+      tabToShow = <MapPage apartmentInfo={apartmentInfos} />
       break
     default:
       tabToShow = <>Page missing</>
@@ -75,7 +63,7 @@ const Tabs: React.FC<{
     { name: 'Kartta', value: 3 },
   ]
   return (
-    <div className="bordered">
+    <div className="boxed">
       {tabs.map(({ name, value }) => (
         <span
           onClick={() => setTab(value)}

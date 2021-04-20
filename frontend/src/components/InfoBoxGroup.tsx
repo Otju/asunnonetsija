@@ -5,7 +5,7 @@ const InfoBoxGrop: React.FC<{ infoBoxes: InfoBoxType[]; vertical?: boolean }> = 
   vertical,
 }) => {
   return (
-    <div className={`${vertical ? 'verticalInfo' : 'horizontalInfo'} bordered`}>
+    <div className={`${vertical ? 'verticalInfo' : 'horizontalInfo'} boxed`}>
       {infoBoxes.map(({ header, info, Icon }) => (
         <InfoBox header={header} info={info} Icon={Icon} key={header} />
       ))}

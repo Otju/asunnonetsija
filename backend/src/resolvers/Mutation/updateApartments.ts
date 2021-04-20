@@ -49,8 +49,9 @@ const updateApartments = async (_root: any, args: Args) => {
     const values = rowNames.map((rowName) => apartments.map((apartment) => apartment[rowName[0]]))
     const queryString = `INSERT INTO apartments (${rowNameString}) SELECT * FROM UNNEST (${rowParamsString})`
     await client.query('BEGIN')
+    await client.query('DROP TABLE apartments')
     await client.query(`
-    CREATE TABLE IF NOT EXISTS "apartments"(
+    CREATE TABLE "apartments"(
       "id" SERIAL PRIMARY KEY,
       "link" TEXT NOT NULL,
       "address" TEXT NOT NULL,
@@ -79,8 +80,6 @@ const updateApartments = async (_root: any, args: Args) => {
       "coordinates" JSON NOT NULL
     );
     `)
-
-    await client.query('TRUNCATE apartments')
     await client.query(queryString, values)
     await client.query('COMMIT')
     return 'Succesfully wrote Aparments to DB'

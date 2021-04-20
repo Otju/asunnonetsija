@@ -1,11 +1,11 @@
-import ApartmentCard from './ApartmentCard'
+import ApartmentCardWithModal from './ApartmentCardWithModal'
 
 import { ParsedApartmentInfo } from '../sharedTypes/types'
 
 const ApartmentList: React.FC<{ apartmentInfos: ParsedApartmentInfo[] }> = ({ apartmentInfos }) => {
   return (
     <div className="apartmentList">
-      {apartmentInfos.map((info) => info && <ApartmentCard info={info} key={info.link} />)}
+      {apartmentInfos.map((info) => info && <ApartmentCardWithModal info={info} key={info.link} />)}
     </div>
   )
 }

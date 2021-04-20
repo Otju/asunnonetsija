@@ -8,13 +8,16 @@ import {
   IoLinkOutline,
   IoHammerOutline,
   IoHourglassOutline,
-  IoBusOutline,
+  IoNavigateOutline,
+  IoStorefrontOutline,
+  IoSchoolOutline,
 } from 'react-icons/io5'
 import { ParsedApartmentInfo, LoanSettings } from '../sharedTypes/types'
 import formatCurrency from './currencyFormatter'
 import calculateHousingBenefit from './housingBenefitCalculator'
 import { ReactNode } from 'react'
 import { IconType } from 'react-icons/lib'
+import roundTo from 'round-to'
 
 export const getApartmentInfos = (
   apartmentInfos: ApartmentInfo[],
@@ -104,11 +107,21 @@ export const getInfoBoxes = (
         },
       ]
     case 'pointsOfIntrest':
-      return info?.pointsOfIntrest?.map(({ name, directDistance }) => ({
-        header: name,
-        info: `${directDistance / 1000} km`,
-        Icon: IoBusOutline,
-      }))
+      return info?.pointsOfIntrest?.map(({ name, directDistance, type }) => {
+        let icon = IoNavigateOutline
+        if (
+          ['suomiYla', 'suomiAla', 'ruotsiYla', 'ruotsiAla', 'lukio', 'university'].includes(type)
+        ) {
+          icon = IoSchoolOutline
+        } else if (type === 'bigStore' || type === 'store') {
+          icon = IoStorefrontOutline
+        }
+        return {
+          header: `${type}: ${name}`,
+          info: `${roundTo(directDistance / 1000, 1)} km`,
+          Icon: icon,
+        }
+      })
     default:
       return [
         {

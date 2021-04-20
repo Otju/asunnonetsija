@@ -29,6 +29,7 @@ const allApartments = `
           lat
           lon
         }
+        type
         directDistance
       }
       bigRenovations {
