@@ -1,5 +1,5 @@
 import './app.scss'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ApartmentList from './components/ApartmentList'
 import {
   ParsedApartmentInfo,
@@ -10,24 +10,34 @@ import {
 import { getApartmentInfos } from './utils/apartmentParsers'
 import Tabs from './components/Tabs'
 import { possibleDestinations } from './utils/constants'
-import { useQuery } from 'urql'
-import allApartments from './graphql/queries/allApartments'
 
 const App = () => {
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     filterSettings: [],
   })
 
-  const [result] = useQuery({
-    query: allApartments,
-  })
+  const [rawData, setRawData] = useState()
 
-  const { data, fetching, error } = result
+  const getData = async () => {
+    const url = 'https://raw.githubusercontent.com/Otju/aparmentInfoData/main/apartmentInfos.json'
+    const rawData = await (await fetch(url)).json()
+    setRawData(rawData)
+  }
 
-  if (fetching) return <p>Loading...</p>
-  if (error) return <p>Oh no... {error.message}</p>
+  useEffect(() => {
+    getData()
+  }, [])
 
-  const apartmentInfos = getApartmentInfos(data.allApartments, searchOptions?.loanSettings)
+  if (!rawData) {
+    return (
+      <div className="pageLoadingDiv">
+        <h2>Ladataan asuntoja...</h2>
+        <div className="lds-dual-ring"></div>
+      </div>
+    )
+  }
+  //@ts-ignore
+  const apartmentInfos = getApartmentInfos(rawData, searchOptions?.loanSettings)
 
   const filterApartments = (apartment: ParsedApartmentInfo): boolean => {
     let keep = true

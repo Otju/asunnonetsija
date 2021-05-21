@@ -6,10 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "front": "copy-and-watch --watch src/**/sharedTypes/**/*.{ts,js} ../frontend/src/",
-    "back": "copy-and-watch --watch src/**/sharedTypes/**/*.{ts,js} ../backend/src/",
     "scrape": "copy-and-watch --watch src/**/sharedTypes/**/*.{ts,js} ../scraper/src/",
     "runtypes": "nodemon src/runtypeToTs.ts",
-    "start": "run-p runtypes front back scrape"
+    "start": "run-p runtypes front scrape"
   },
   "author": "Otju",
   "license": "ISC",

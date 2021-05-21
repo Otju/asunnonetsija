@@ -7,7 +7,7 @@ import {
 } from '../sharedTypes/types'
 import { generalFilterFields, travelFilterFields } from '../utils/constants'
 import FilterSettings from './FilterSettings'
-import MapPage from './MapPage'
+
 const Tabs: React.FC<{
   apartmentInfos: ParsedApartmentInfo[]
   setSearchOptions: Function
@@ -49,9 +49,6 @@ const Tabs: React.FC<{
         />
       )
       break
-    case 3:
-      tabToShow = <MapPage apartmentInfo={apartmentInfos} />
-      break
     default:
       tabToShow = <>Page missing</>
       break
@@ -60,7 +57,6 @@ const Tabs: React.FC<{
     { name: 'Haku', value: 0 },
     { name: 'Matka-ajat', value: 1 },
     { name: 'Laina', value: 2 },
-    { name: 'Kartta', value: 3 },
   ]
   return (
     <div className="boxed">
